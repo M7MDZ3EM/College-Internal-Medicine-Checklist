@@ -509,6 +509,49 @@ window.dispatchEvent(new Event('fbready'));
   }
   .btn:hover,.tt:hover,.sc button:hover,.rm:hover{filter:brightness(.97)}
 .login .rem{display:flex;align-items:center;gap:8px;font-size:.88rem;justify-content:flex-start}.login .rem input{width:18px;height:18px;margin:0}
+
+  /* ===== navigation round ===== */
+  body:not(.authed) .tabs,body:not(.authed) #drawer,body:not(.authed) #drawerBg,body:not(.authed) #drawerStrip{display:none!important}
+  body:not(.authed) .wrap{padding-left:0!important}
+  .tabs .ti{display:none}.wo{display:none}
+  @media screen and (max-width:999px){#t-s .ti{display:inline-flex}#t-s .tl{display:none}}
+  .dbtn{display:none;align-items:center;justify-content:center}body[data-view=ov] .dbtn{display:inline-flex}.topbar>span{align-items:center}
+  #drawerBg{position:fixed;inset:0;background:rgba(0,0,0,.42);opacity:0;pointer-events:none;z-index:8000}
+  #drawer{position:fixed;top:0;right:0;bottom:0;width:min(75vw,340px);transform:translateX(110%);background:var(--paper);color:var(--ink);border-left:1px solid var(--card-border);z-index:8001;display:flex;flex-direction:column;gap:6px;padding:calc(14px + env(safe-area-inset-top,0px)) 14px 14px;box-shadow:-12px 0 40px rgba(0,0,0,.25);transition:transform .28s cubic-bezier(.2,.8,.2,1);touch-action:pan-y;will-change:transform;visibility:hidden}
+  #drawer.open{visibility:visible}
+  #drawer .dh{display:flex;justify-content:space-between;align-items:center;padding-bottom:6px}#drawer .dh button{width:36px;height:36px;border-radius:50%;border:1px solid var(--card-border);background:transparent;color:inherit;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+  #drawer .de{font-size:.8rem;opacity:.7;padding:0 2px 10px;overflow:hidden;text-overflow:ellipsis;border-bottom:1px solid var(--card-border);margin-bottom:6px}
+  #drawer .di{display:flex;align-items:center;gap:12px;font:inherit;font-size:.98rem;padding:14px 12px;border:0;background:transparent;color:inherit;border-radius:12px;cursor:pointer;text-align:left}#drawer .di:active,#drawer .di:hover{background:var(--card-border)}
+  html:not(.glass-off) #drawer{background:var(--g-bg);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5)}
+  #drawerStrip{position:fixed;right:0;top:96px;bottom:150px;width:14px;z-index:900;touch-action:pan-y;display:none}body[data-view=ov] #drawerStrip{display:block}
+  .snow{display:inline-flex;align-items:center;justify-content:center}.snow.on{color:#4f8fcf;background:rgba(79,143,207,.16)!important}.snow.ping{animation:snowp .6s ease}@keyframes snowp{0%{transform:scale(1) rotate(0)}40%{transform:scale(1.3) rotate(60deg)}100%{transform:scale(1) rotate(0)}}
+  .sheetbg{position:fixed;inset:0;z-index:9100;background:rgba(0,0,0,.42);display:flex;align-items:flex-end;justify-content:center;animation:fadein .2s ease}.sheetbg.out{opacity:0;transition:opacity .18s}
+  .sheet{background:var(--paper);color:var(--ink);width:min(560px,100%);max-height:88vh;overflow:auto;border-radius:20px 20px 0 0;border:1px solid var(--card-border);padding:14px 16px calc(18px + env(safe-area-inset-bottom,0px));animation:sheetup .28s cubic-bezier(.2,.8,.2,1);box-shadow:0 -10px 40px rgba(0,0,0,.25)}
+  .sheetbg.out .sheet{transform:translateY(30px);transition:transform .18s}
+  .sheet .sh2{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  @media(min-width:700px){.sheetbg{align-items:center}.sheet{border-radius:20px;animation:sheetpop .22s ease}.sheet.small{width:min(440px,100%)}}
+  html:not(.glass-off) .sheet{background:var(--g-bg);-webkit-backdrop-filter:blur(22px) saturate(1.4);backdrop-filter:blur(22px) saturate(1.4)}
+  @keyframes fadein{from{opacity:0}to{opacity:1}}@keyframes sheetup{from{transform:translateY(40px);opacity:.6}to{transform:none;opacity:1}}@keyframes sheetpop{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
+  #v-set{max-width:760px}.sethead{display:flex;align-items:center;gap:12px;margin:0 0 6px}.sethead h2{margin:0;font-size:1.3rem}
+  .sgrp{margin:10px 0;padding:0;overflow:hidden}.sgh{display:flex;align-items:center;gap:10px;width:100%;padding:14px 16px;background:transparent;border:0;color:inherit;font:inherit;cursor:pointer;text-align:left}.sgh b{flex:1}
+  .sgb{padding:0 16px 8px}.sgb.new{animation:unfoldS .22s ease}@keyframes unfoldS{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+  .srow{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--card-border)}.srow .st{flex:1;min-width:0;display:flex;flex-direction:column}.srow small{opacity:.65;font-size:.74rem}.srow .mail{font-size:.82rem;opacity:.8;overflow:hidden;text-overflow:ellipsis;max-width:55%}
+  .gi input{width:64px}.gi{display:flex;align-items:center;gap:6px;white-space:nowrap}
+  #tip{position:fixed;z-index:9000;background:var(--paper);color:var(--ink);border:1px solid var(--card-border);border-radius:16px;padding:12px 14px;box-shadow:0 10px 34px rgba(0,0,0,.25);opacity:0;transform:translateY(6px) scale(.97);transition:opacity .2s,transform .2s}
+  #tip.in{opacity:1;transform:none}#tip b{font-size:.92rem}#tip p{margin:4px 0 10px;font-size:.84rem;line-height:1.45;opacity:.9}
+  #tip .tb{display:flex;gap:8px;justify-content:flex-end}#tip .tg{font:inherit;font-size:.82rem;padding:8px 14px;border-radius:99px;border:0;background:#c9895e;color:#fff;cursor:pointer}#tip .tg.alt{background:transparent;color:inherit;border:1px solid var(--card-border)}
+  #tip .tc{position:absolute;left:calc(var(--cx,50%) - 6px);width:12px;height:12px;background:inherit;border:1px solid var(--card-border);transform:rotate(45deg)}
+  #tip[data-pos=b] .tc{top:-7px;border-right:0;border-bottom:0}#tip[data-pos=a] .tc{bottom:-7px;border-left:0;border-top:0}
+  html:not(.glass-off) #tip{background:var(--g-bg);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
+  .view.on#v-set{animation:vfade .22s ease}@keyframes vfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media screen and (min-width:1000px){
+    .wo{display:flex}.tabs .ti{display:inline-flex}.tabs button{display:flex;align-items:center;gap:10px}
+    .tabs .sep{height:1px;background:var(--card-border);margin:8px 4px}.tabs .navemail{font-size:.72rem;opacity:.7;padding:2px 14px 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+    .tabs .navtoggle{align-self:flex-end;width:36px;height:32px;padding:0;justify-content:center;border-radius:10px}
+    .tabs,.wrap{transition:width .25s ease,padding .25s ease}
+    html.navc .tabs{width:62px;padding:8px 6px}html.navc .tl,html.navc .navemail{display:none}html.navc .tabs button{justify-content:center;padding:11px 0}html.navc .tabs .navtoggle{align-self:center}html.navc .wrap{padding-left:96px}
+    .dbtn{display:none!important}#v-set{margin:0 auto}
+  }
 </style>
 </head>
 <body>
@@ -519,6 +562,7 @@ window.dispatchEvent(new Event('fbready'));
   <button id="toTop" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
   <nav class="tabs"><button id="t-ov" onclick="show('ov')">Overview</button><button id="t-im" onclick="show('im')">IM</button><button id="t-bb" onclick="show('bb')">B&amp;B</button><button id="t-s" onclick="openSearch()" aria-label="Search topics" style="flex:0 0 auto;min-width:48px">🔍</button></nav>
   <div class="view ov" id="v-ov"></div>
+  <div class="view" id="v-set"></div>
   <div class="view" id="v-im">
   <header class="page">
     <div>
@@ -642,8 +686,7 @@ function showFatal(text){
   document.getElementById("systems").innerHTML =
     '<div class="state-msg">⚠️ ' + text + '<br><button onclick="location.reload()">Reload</button></div>';
 }
-function signOut(){try{localStorage.removeItem('wasSignedIn')}catch(e){}if(!auth||!confirm('Sign out of '+(window._email||'your account')+'?'))return;auth.signOut()}
-
+async function signOut(){if(!auth||!confirm('Sign out of '+(window._email||'your account')+'?'))return;window._explicit=1;try{await auth.signOut();try{localStorage.removeItem('wasSignedIn')}catch(e){}}catch(e){window._explicit=0;toast('Could not sign out. Try again.')}}
 /* ---------- sync ---------- */
 function startSync(user){
   wipeLocal();window._email=user.email||'';window._uid=user.uid;
@@ -892,7 +935,7 @@ function paceCard(a,b){const ex=cfg.exam,t=today(),r=a+b,R=restSet();const inp=`
   else if(dd===0)h=`<b>Exam is today</b><span>${a} IM topics · ${b} B&amp;B videos still open.</span>`;
   else if(!free)h=`<b>No free days left</b><span>${r} items open, but every day before ${f} is a rest day.</span>`;
   else{can=true;h=`<b>${Math.ceil(r/free)} per day</b><span>${a} IM topics + ${b} B&amp;B videos over ${free} study day${free>1?'s':''} (${f}) · about ${(a/free).toFixed(1)} IM + ${(b/free).toFixed(1)} B&amp;B daily. Reviews not included.</span>`}}
- return `<div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:14px 0"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;opacity:.6">Daily pace to exam</span>${h}</div><span style="display:flex;gap:8px;flex-wrap:wrap">${inp}${ex?'<button class="btn" onclick="setExam(\'\')" title="Clear exam date">'+I('x',14)+'</button>':''}${can?'<button class="btn" onclick="autoPlan()">'+I('bolt',15)+' Auto-plan</button>':''}</span></div>`}
+ return `<div class="card" data-tip="pace" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:14px 0"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;opacity:.6">Daily pace to exam</span>${h}<span style="font-size:.7rem;opacity:.6">Plan with AI is for planning around an exam with an AI's help.</span></div><span style="display:flex;gap:8px;flex-wrap:wrap">${inp}<button class="btn" data-tip="ai" onclick="openAI()">${I('sparkle',15)} Plan with AI</button>${ex?'<button class="btn" onclick="setExam(\'\')" title="Clear exam date">'+I('x',14)+'</button>':''}${can?'<button class="btn" onclick="autoPlan()">'+I('bolt',15)+' Auto-plan</button>':''}</span></div>`}
 function exportData(){const o={app:'im-bnb-checklist',version:1,exported:new Date().toISOString(),state,bb,plans,settings:cfg,sp,ord,col:colm};const u=URL.createObjectURL(new Blob([JSON.stringify(o,null,2)],{type:'application/json'})),a=document.createElement('a');a.href=u;a.download='checklist-backup-'+today()+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);toast('Backup downloaded')}
 function restoreSafety(){let d;try{d=JSON.parse(localStorage.getItem('im_bnb_safety'))}catch(e){}if(!d||!docRef){toast('No safety copy found');return}if(typeof d!=='object'||Array.isArray(d)){toast('The safety copy is damaged');return}const o={};['state','bb','plans','sp','ord','col','settings'].forEach(k=>{if(d[k]!==undefined)o[k]=d[k]});importData({files:[new File([JSON.stringify(o)],'safety-copy.json',{type:'application/json'})],value:''})}
 function importPick(){const f=document.getElementById('impF');if(f){f.value='';f.click()}}
@@ -904,7 +947,7 @@ function importData(inp){const f=inp.files&&inp.files[0];if(!f)return;const r=ne
  const nsp={};for(const [k,v] of Object.entries(isO(d.sp)?d.sp:{}))if(TI[k]&&v===true)nsp[k]=true;
  const nord={};for(const s of ['im','bb'])if(isO(d.ord)&&Array.isArray(d.ord[s]))nord[s]=d.ord[s].filter(x=>typeof x==='string').slice(0,200);
  const ncol={};for(const [k,v] of Object.entries(isO(d.col)?d.col:{}))if(/^(im|bb):[\w-]+$/.test(k)&&v===true)ncol[k]=true;
- const S=isO(d.settings)?d.settings:{},ni=(v,def)=>{v=parseInt(v);return v>=1&&v<=365?v:def},nc={r1:ni(S.r1,3),r2:ni(S.r2,10)};nc.r2=Math.max(nc.r1,nc.r2);if(RXd.test(S.exam))nc.exam=S.exam;if(S.theme==='dark'||S.theme==='light')nc.theme=S.theme;if(isO(S.pz))nc.pz={im:S.pz.im===true,bb:S.pz.bb===true};if(Array.isArray(S.rest))nc.rest=S.rest.filter(x=>RXd.test(x)).slice(0,400);if(S.smart===false)nc.smart=false;if(S.dp==='app'||S.dp==='native')nc.dp=S.dp;if(S.glass===false)nc.glass=false;if(S.anim===false)nc.anim=false;nc.goal=Math.min(7,ni(S.goal,5));
+ const S=isO(d.settings)?d.settings:{},ni=(v,def)=>{v=parseInt(v);return v>=1&&v<=365?v:def},nc={r1:ni(S.r1,3),r2:ni(S.r2,10)};nc.r2=Math.max(nc.r1,nc.r2);if(RXd.test(S.exam))nc.exam=S.exam;if(S.theme==='dark'||S.theme==='light')nc.theme=S.theme;if(isO(S.pz))nc.pz={im:S.pz.im===true,bb:S.pz.bb===true};if(Array.isArray(S.rest))nc.rest=S.rest.filter(x=>RXd.test(x)).slice(0,400);if(S.smart===false)nc.smart=false;if(S.tipsOff===true)nc.tipsOff=true;if(isO(S.tipsSeen)){nc.tipsSeen={};for(const [k,v] of Object.entries(S.tipsSeen))if(v===1&&/^[a-z0-9_]+$/.test(k))nc.tipsSeen[k]=1}if(S.dp==='app'||S.dp==='native')nc.dp=S.dp;if(S.glass===false)nc.glass=false;if(S.anim===false)nc.anim=false;nc.goal=Math.min(7,ni(S.goal,5));
  const dn=Object.values(st).filter(x=>x.done).length,wn=Object.keys(nb).filter(k=>nb[k].watch).length;
  if(!docRef||!confirm('Replace ALL current data with this backup?\n\n• '+Object.keys(st).length+' IM topics ('+dn+' done)\n• '+Object.keys(nb).length+' B&B entries ('+wn+' watched)\n• '+Object.keys(np).length+' plans\n\nA safety copy of your current data is kept on this device.'))return;
  try{localStorage.setItem('im_bnb_safety',JSON.stringify({t:Date.now(),state,bb,plans,settings:cfg,sp,ord,col:colm}))}catch(e){}
@@ -921,7 +964,7 @@ function gapFor(n,rt){const G={3:[1,2],2:[3,5],1:[7,10]};return cfg.smart===fals
 function saveKey(k){if(docRef)docRef.set({settings:{[k]:cfg[k]}},{merge:true}).catch(()=>setSync('error'));renderAll()}
 const setSmart=()=>{cfg.smart=cfg.smart===false;saveKey('smart')},setGoal=n=>{cfg.goal=Math.min(7,Math.max(1,n));saveKey('goal')};
 const restIn=m=>(cfg.rest||[]).filter(d=>d.startsWith(m)).length;
-function toggleRest(d){d=d||today();if(!RXD.test(d))return;let r=(cfg.rest||[]).slice();if(r.includes(d))r=r.filter(x=>x!==d);else{if(d<today()){toast('Rest days can only be today or later');return}if(restIn(d.slice(0,7))>=REST_MAX){toast('No rest days left in that month');return}if(studyCounts()[d]){toast('You already studied that day');return}r.push(d)}cfg.rest=r.sort();saveKey('rest')}
+function toggleRest(d){d=d||today();if(!RXD.test(d))return;let r=(cfg.rest||[]).slice();if(r.includes(d))r=r.filter(x=>x!==d);else{if(d<today()){toast('Rest days can only be today or later');return}if(restIn(d.slice(0,7))>=REST_MAX){toast('No rest days left in that month');return}if(studyCounts()[d]){toast('You already studied that day');return}r.push(d)}cfg.rest=r.sort();window._ping=1;saveKey('rest');if(window.frzRefresh)frzRefresh()}
 function cdChip(){if(!cfg.exam)return'';const dd=Math.round((new Date(cfg.exam+'T00:00:00')-new Date(today()+'T00:00:00'))/864e5);if(dd<0)return'';return `<div class="streak" title="Days until your exam">${I('clock',15)} <b>${dd||'Today'}</b>${dd?'d':''}</div>`}
 let LAST=null;
 function batchPlan(L){const u={};let n=0;for(const x of L){if(dupPlan(x.k,x.kind,x.n,x.d))continue;const id=pid(x.k,x.kind,x.n,x.d);plans[id]={d:x.d,t:x.k,k:x.kind,n:x.n,a:1};u[id]=plans[id];n++}if(n){LAST={ids:Object.keys(u)};renderAll();setSync('saving');docRef.set({plans:u},{merge:true}).catch(()=>setSync('error'))}return n}
@@ -948,13 +991,13 @@ function spreadOverdue(){const t=today(),R=restSet(),days=[];for(let i=0;i<14&&d
  const per=L.length/days.length,n=batchPlan(L.map((x,i)=>({k:x.k,kind:'review',n:x.n,d:days[Math.min(days.length-1,Math.floor(i/per))]})));if(n)undoToast('Spread '+n+' reviews over '+days.length+' days');else toast('Nothing new to plan')}
 const ovT=k=>{ovOpen[k]=!(ovOpen[k]===undefined?DEFO[k]:ovOpen[k]);renderOV()},DEFO={heat:true,sys:false,weak:false,rest:false,plans:false,ai:false,set:false};
 const op=k=>ovOpen[k]===undefined?DEFO[k]:ovOpen[k];
-const sec=(k,title,sum,body)=>`<div class="card" style="margin:14px 0"><div onclick="ovT('${k}')" style="display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer"><b>${title}</b><span style="font-size:.78rem;opacity:.65;display:flex;gap:6px;align-items:center">${sum}<span>${op(k)?I('down',16):I('right',16)}</span></span></div>${op(k)?'<div style="margin-top:10px">'+body+'</div>':''}</div>`;
+const sec=(k,title,sum,body)=>`<div class="card" data-sec="${k}" style="margin:14px 0"><div onclick="ovT('${k}')" style="display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer"><b>${title}</b><span style="font-size:.78rem;opacity:.65;display:flex;gap:6px;align-items:center">${sum}<span>${op(k)?I('down',16):I('right',16)}</span></span></div>${op(k)?'<div style="margin-top:10px">'+body+'</div>':''}</div>`;
 function bbMin(){const m={};BBDATA.forEach(s=>s.subsystems.forEach((u,a)=>u.topics.forEach((t,b)=>m['bb:'+s.key+'-'+a+'-'+b]=t.minutes)));return m}
 function weekData(){const t=today(),C=studyCounts(),mon=addDays(t,-((new Date(t+'T00:00:00').getDay()+6)%7)),sun=addDays(mon,6);let days=0,tot=0,best=['',0],pt=0;for(let i=0;i<7;i++){const d=addDays(mon,i),c=C[d]||0;if(c){days++;tot+=c;if(c>best[1])best=[d,c]}pt+=C[addDays(mon,i-7)]||0}
  let mins=0;const M=bbMin();for(const id in bb){const b=bb[id];if(b.watch&&b.wd>=mon&&b.wd<=sun)mins+=M['bb:'+id]||0}
  return{days,tot,best,pt,mins,slip:Object.values(plans).filter(p=>TI[p.t]&&p.d>=mon&&p.d<t&&!isDone(p.t,p)&&!isOff(p.t)).length,rest:(cfg.rest||[]).filter(d=>d>=mon&&d<=sun).length}}
 function weekCard(){const w=weekData(),g=cfg.goal||5,pct=Math.min(100,Math.round(w.days/g*100)),bd=w.best[1]?new Date(w.best[0]+'T00:00:00').toLocaleDateString(undefined,{weekday:'long'})+' ('+w.best[1]+')':'—';
- return `<div class="card" style="display:flex;align-items:center;gap:14px;margin:14px 0"><svg viewBox="0 0 64 64" width="64" height="64" style="flex:none"><circle cx="32" cy="32" r="26" fill="none" stroke="#8883" stroke-width="7"/><circle cx="32" cy="32" r="26" fill="none" stroke="${w.days>=g?'#3fa06a':'#c9895e'}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${pct*1.634} 163.4" transform="rotate(-90 32 32)"/><text x="32" y="37" text-anchor="middle" font-size="16" font-weight="700" fill="currentColor">${w.days}/${g}</text></svg>
+ return `<div class="card" data-tip="goal" style="display:flex;align-items:center;gap:14px;margin:14px 0"><svg viewBox="0 0 64 64" width="64" height="64" style="flex:none"><circle cx="32" cy="32" r="26" fill="none" stroke="#8883" stroke-width="7"/><circle cx="32" cy="32" r="26" fill="none" stroke="${w.days>=g?'#3fa06a':'#c9895e'}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${pct*1.634} 163.4" transform="rotate(-90 32 32)"/><text x="32" y="37" text-anchor="middle" font-size="16" font-weight="700" fill="currentColor">${w.days}/${g}</text></svg>
  <div style="min-width:0;display:flex;flex-direction:column;gap:2px"><b>Weekly goal${w.days>=g?' ✓':''}</b><span style="font-size:.78rem;opacity:.7">${w.days} of ${g} study days this week · <button class="btn" style="padding:0 8px" onclick="setGoal(${g-1})">−</button> <button class="btn" style="padding:0 8px" onclick="setGoal(${g+1})">＋</button></span>
  <span style="font-size:.78rem;opacity:.7">${w.tot} finished (last week ${w.pt}) · best day ${bd}${w.mins?' · '+fmtMin(w.mins)+' watched':''}${w.slip?' · '+w.slip+' planned item'+(w.slip>1?'s':'')+' slipped':''}${w.rest?' · '+w.rest+' rest day'+(w.rest>1?'s':''):''}</span></div></div>`}
 let HM={off:0,sel:''};
@@ -976,7 +1019,7 @@ function weakBody(){const L=weakList();if(!L.length)return'<div class="empty">No
  return '<div style="max-height:320px;overflow-y:auto">'+L.map(([r,k])=>`<div class="pr"><div class="pn"><i class="dd ${r===3?'r':'y'}"></i> ${TI[k].n}<small>${TI[k].g}${isOff(k)?' · paused':''}</small></div><button onclick="sGo('${k}')">Go</button><button onclick="addPlan('${k}','review',today())" title="Plan a review today">${I('cal',15)}</button></div>`).join('')+'</div>'}
 function restBody(){const t=today(),m=t.slice(0,7),left=REST_MAX-restIn(m),on=restSet().has(t),up=(cfg.rest||[]).filter(d=>d>=addDays(t,-7));
  return `<div style="font-size:.84rem;margin-bottom:8px">Rest days keep your streak alive. ${left} of ${REST_MAX} left this month.</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" onclick="toggleRest()">${I('bed',15)} ${on?'Undo rest today':'Rest today'}</button><label class="btn">＋ Another day<input type="date" onchange="toggleRest(this.value)"></label></div>${up.length?'<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">'+up.map(d=>`<button class="btn" onclick="toggleRest('${d}')" title="Remove">${d} ✕</button>`).join('')+'</div>':''}`}
-function ovExtra(){const L=weakList().length;return '<div class="xg">'+sec('heat','Study heatmap','',heatBody())+sec('sys','Strong / weak by system','',sysBody())+sec('weak','Weak topics',L+' to revisit',weakBody())+sec('plans','Plan tools','',plansBody())+sec('set','Settings','',settingsBody())+sec('rest','Rest days',restIn(today().slice(0,7))+'/'+REST_MAX+' used',restBody())+'</div>'}
+function ovExtra(){const L=weakList().length;return '<div class="xg">'+sec('heat','Study heatmap','',heatBody())+sec('sys','Strong / weak by system','',sysBody())+sec('weak','Weak topics',L+' to revisit',weakBody())+'</div>'}
 let _td=today();document.addEventListener('visibilitychange',()=>{if(!document.hidden&&today()!==_td){if(selD===_td)selD=today();if(calM===_td.slice(0,7))calM=today().slice(0,7);_td=today();if(docRef)renderAll()}});
 /* ===== Plan with AI ===== */
 const AI_RULES=`=== STUDY PLAN REQUEST: READ THIS FIRST ===
@@ -1019,7 +1062,7 @@ function aiParse(text){const ok=[],bad=[],t=today(),R=restSet(),P=[],z=x=>String
   if(!why&&(seen.has(k+kind+n+d)||dupPlan(k,kind,n,d)))why='already planned that day';
   if(why){bad.push([x.L,why]);continue}seen.add(k+kind+n+d);if(kind==='study')sd[k]=d;else rd[k+'|'+n]=d;ok.push({k,kind,n,d})}
  return{ok,bad}}
-function aiImport(){const W=document.createElement('div');W.style.cssText='position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:14px';
+function aiImport(){const W=document.createElement('div');W.setAttribute('data-modal','');W.style.cssText='position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:14px';
  W.innerHTML='<div style="background:var(--paper);color:var(--ink);border:1px solid var(--card-border);border-radius:18px;padding:16px;width:min(520px,100%);max-height:88vh;overflow:auto;display:flex;flex-direction:column;gap:10px"><b>Import a plan from AI</b><label class="btn" style="align-self:flex-start">Choose .txt file<input type="file" id="aiF" accept=".txt,text/plain" hidden></label><textarea id="aiT" rows="6" placeholder="…or paste the plan here" style="width:100%;font:inherit;font-size:16px;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:transparent;color:inherit;box-sizing:border-box"></textarea><div id="aiP" style="font-size:.84rem"></div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" id="aiX">Cancel</button><button class="btn" id="aiV">Preview</button><button class="btn" id="aiA" disabled style="background:#c9895e;color:#fff">Apply</button></div></div>';document.body.appendChild(W);let res=null;
  const $=i=>W.querySelector('#'+i);$('aiX').onclick=()=>W.remove();W.onclick=e=>{if(e.target===W)W.remove()};
  $('aiF').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{$('aiT').value=r.result;$('aiV').click()};r.readAsText(f)};
@@ -1042,10 +1085,10 @@ function selDay(d){selD=d;renderOV()}
 function mon(n){const [y,m]=calM.split('-').map(Number);calM=iso(new Date(y,m-1+n,1)).slice(0,7);renderOV()}
 function planRev(k,n,d){if(d)addPlan(k,'review',d,n)}
 function revDone(k,n){setDone(k,{k:'review',n},true)}
-function setCfg(k,v){cfg[k]=Math.max(1,parseInt(v)||1);if(cfg.r2<cfg.r1)cfg.r2=cfg.r1;docRef.set({settings:cfg},{merge:true});renderOV()}
+function setCfg(k,v){cfg[k]=Math.max(1,parseInt(v)||1);if(cfg.r2<cfg.r1)cfg.r2=cfg.r1;docRef.set({settings:cfg},{merge:true});renderAll()}
 function srch(q){q=q.trim().toLowerCase();const el=document.getElementById('sr');if(!q){el.innerHTML='';return}
   el.innerHTML=Object.keys(TI).filter(k=>TI[k].n.toLowerCase().includes(q)).slice(0,8).map(k=>`<div class="pr"><div class="pn">${TI[k].n}<small>${TI[k].s==='im'?'IM':'B&amp;B'} · ${TI[k].g}</small></div><button onclick="addPlan('${k}','study')">Study</button><button onclick="addPlan('${k}','review')">Review</button></div>`).join('')||'<div class="empty">No match</div>'}
-function show(t){['ov','im','bb'].forEach(x=>{document.getElementById('v-'+x).classList.toggle('on',x===t);document.getElementById('t-'+x).classList.toggle('on',x===t)});cur=t;if(docRef)renderAll();const v=document.getElementById('v-'+t);v.classList.add('anim');v.querySelectorAll('.system-card,.card,.summary-card').forEach((e,i)=>e.style.setProperty('--d',Math.min(i*45,420)+'ms'));clearTimeout(window._at);window._at=setTimeout(()=>v.classList.remove('anim'),1300);try{localStorage.setItem('tab',t)}catch(e){}}
+function show(t){['ov','im','bb','set'].forEach(x=>{const v=document.getElementById('v-'+x);if(v)v.classList.toggle('on',x===t);const b=document.getElementById('t-'+x);if(b)b.classList.toggle('on',x===t)});document.body.dataset.view=t;if(window.closeDrawer)closeDrawer(true);if(window.hideTip)hideTip();cur=t;if(docRef)renderAll();const v=document.getElementById('v-'+t);v.classList.add('anim');v.querySelectorAll('.system-card,.card,.summary-card').forEach((e,i)=>e.style.setProperty('--d',Math.min(i*45,420)+'ms'));clearTimeout(window._at);window._at=setTimeout(()=>v.classList.remove('anim'),1300);try{localStorage.setItem('tab',t)}catch(e){}}
 function renderOV(){const el=document.getElementById('v-ov');if(!el||!docRef||(document.activeElement&&document.activeElement.id==='planQ'))return;
   const t=today(),P=Object.entries(plans).filter(([,p])=>TI[p.t]&&p.d);
   const V=[];for(const k in TI){const T=TI[k];let d='';if(T.s==='im'){const s=getTopicState(T.id);if(s.done)d=s.date}else{const b=bbGet(T.id);if(b.watch)d=b.wd}if(d)V.push(['v'+k,{d,t:k}])}
@@ -1073,14 +1116,13 @@ function renderOV(){const el=document.getElementById('v-ov');if(!el||!docRef||(d
   <h3>Due for review${dl.length>6?' ('+dl.length+')':''}</h3><div class="card">${dr||'<div class="empty">No reviews due. 🎉</div>'}${dl.filter(x=>x.due<t).length>=2?'<button class="btn" style="margin-top:8px" onclick="spreadOverdue()">Spread overdue over 3 days</button>':''}</div></div>
   <div><h3>Calendar</h3><div class="card"><div class="calh"><button onclick="mon(-1)">‹</button>${new Date(Y,M-1,1).toLocaleDateString(undefined,{month:'long',year:'numeric'})}<button onclick="mon(1)">›</button></div><div class="cal">${cells}</div></div>
   <h3>${new Date(selD+'T00:00:00').toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'short'})}</h3><div class="card">${sel||'<div class="empty">No plans for this day.</div>'}<button class="btn" style="margin-top:10px;width:100%" onclick="openSearch()">${I('search',15)} Add a topic to this day…</button><div id="sr"></div></div></div></div>
-  ${ovExtra()}<h3>Review gaps</h3><div class="card set gaps"><label class="gl">First review after <input type="number" min="1" value="${cfg.r1}" onchange="setCfg('r1',this.value)"> days</label><label class="gl">Second review after <input type="number" min="1" value="${cfg.r2}" onchange="setCfg('r2',this.value)"> days</label><button class="btn" onclick="setSmart()" title="Use your 🟢🟡🔴 rating to set the gap">Rating-based gaps: ${cfg.smart===false?'off':'on'}</button></div>
-  <div class="card set" style="justify-content:space-between;margin-top:14px"><span style="font-size:.85rem;opacity:.8;min-width:0;overflow:hidden;text-overflow:ellipsis">Signed in as ${escH(window._email||'')}</span><button class="btn" onclick="signOut()">Sign out</button></div>`}
+  ${ovExtra()}`}
 
 function applyTheme(t){document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}renderTop()}
 function toggleTheme(){const h=document.documentElement;h.classList.add('tx','spin');setTimeout(()=>h.classList.remove('tx','spin'),700);const t=document.documentElement.dataset.theme==='dark'?'light':'dark';cfg.theme=t;applyTheme(t);if(docRef)docRef.set({settings:cfg},{merge:true})}
 function streak(){const C=studyCounts(),R=restSet();let d=today();const on=!!C[d]||R.has(d);if(!on)d=addDays(d,-1);let n=0;while(C[d]||R.has(d)){if(C[d])n++;d=addDays(d,-1)}return{n,on}}
 function renderTop(){const el=document.getElementById('topbar');if(!el)return;const {n,on}=streak();
-  el.innerHTML=`<span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-width:0"><div class="streak ${on?'on':''}"><span class="flame">${I('flame',18)}</span> <b>${n}</b> day streak${on?' ✓':`<small> · ${n?'learn one today to keep it':'learn one topic today to start'}</small>`}</div>${cdChip()}</span><span style="display:flex;gap:8px"><button class="tt" onclick="openSearch()" aria-label="Search topics">${I('search',20)}</button><button class="tt" onclick="toggleTheme()" aria-label="Light / dark mode">${document.documentElement.dataset.theme==='dark'?I('sun',20):I('moon',20)}</button></span>`}
+  el.innerHTML=`<span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-width:0"><div class="streak ${on?'on':''}"><span class="flame">${I('flame',18)}</span> <b>${n}</b> day streak${on?' ✓':`<small> · ${n?'learn one today to keep it':'learn one topic today to start'}</small>`}</div>${snowBtn()}${cdChip()}</span><span style="display:flex;gap:8px"><button class="tt" onclick="openSearch()" aria-label="Search topics">${I('search',20)}</button><button class="tt" onclick="toggleTheme()" aria-label="Light / dark mode">${document.documentElement.dataset.theme==='dark'?I('sun',20):I('moon',20)}</button><button class="tt dbtn" onclick="toggleDrawer()" aria-label="Open menu" title="Menu">${I('left',18)}</button></span>`}
 
 let sp={},ord={},colm={};
 const lp=k=>{const T=TI[k];return !!(T&&cfg.pz&&cfg.pz[T.s])};const isOff=k=>!!sp[k]||lp(k);
@@ -1118,16 +1160,16 @@ function resetSrc(src){if(!docRef)return;if(!confirm('Reset the '+(src==='im'?'I
 function resetAll(){resetSrc('im')}function resetBB(){resetSrc('bb')}
 function flip(pos){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;document.querySelectorAll('.system-card[data-k]').forEach(e=>{const o=pos[e.dataset.k];if(o==null)return;const dy=o-e.getBoundingClientRect().top;if(dy)e.animate([{transform:`translateY(${dy}px)`},{transform:'none'}],{duration:320,easing:'cubic-bezier(.2,.8,.2,1)'})})}
 document.addEventListener('change',e=>{const t=e.target;if(t.type!=='checkbox'||!t.checked)return;const i=[...document.querySelectorAll('.view.on input[type=checkbox]')].indexOf(t);requestAnimationFrame(()=>{const n=document.querySelectorAll('.view.on input[type=checkbox]')[i];n&&n.classList.add('pop')})},true);
-function fillJump(w){const el=document.getElementById('jump-'+w);if(!el)return;const pz=cfg.pz&&cfg.pz[w],nm=w==='im'?'IM':'B&B';el.innerHTML=`<button class="jt pzb${pz?' on':''}" onclick="togglePause('${w}')">${pz?'▶ Resume '+nm+' (paused)':'⏸ Pause '+nm}</button>`+ordered(w==='im'?DATA:BBDATA,w).map(x=>`<button class="jt${(sysOff(w,x.key)||pz)?' off':''}" onclick="jumpTo('${w}','${x.key}')">${x.emoji||''} ${x.name}</button>`).join('')}
+function fillJump(w){const el=document.getElementById('jump-'+w);if(!el)return;const pz=cfg.pz&&cfg.pz[w],nm=w==='im'?'IM':'B&B';el.innerHTML=`<button class="jt pzb${pz?' on':''}" onclick="togglePause('${w}')">${pz?I('play',14)+' Resume '+nm+' (paused)':I('pause',14)+' Pause '+nm}</button>`+ordered(w==='im'?DATA:BBDATA,w).map(x=>`<button class="jt${(sysOff(w,x.key)||pz)?' off':''}" onclick="jumpTo('${w}','${x.key}')">${x.emoji||''} ${x.name}</button>`).join('')}
 function togglePause(w){cfg.pz=Object.assign({},cfg.pz||{});cfg.pz[w]=!cfg.pz[w];saveKey('pz');toast((w==='im'?'IM':'B&B')+(cfg.pz[w]?' list paused — your own pauses are kept':' list resumed'))}
 function jumpTo(w,k){const q='[data-k="'+w+':'+k+'"]';let e=document.querySelector(q);if(!e)return;const o=e.querySelector('.sc button[title="Open"]');if(o){o.click();e=document.querySelector(q)}e.scrollIntoView({behavior:'smooth',block:'start'})}
 (()=>{const b=document.getElementById('toTop');let t=0;addEventListener('scroll',()=>{if(t)return;t=requestAnimationFrame(()=>{t=0;b.classList.toggle('on',scrollY>500)})},{passive:true})})();
-const _ri=renderAll;renderAll=function(){if(window.dpHold&&dpHold()){window._rq=1;return}const _y=window.scrollY,_c=window._lc===cur;window._lc=cur;if(cur==='im'){_ri();fillJump('im')}else if(cur==='bb'){renderBB();fillJump('bb')}else renderOV();renderTop();window._sig=JSON.stringify([state,bb,plans,sp,ord,colm,cfg]);if(_c&&Math.abs(window.scrollY-_y)>2)window.scrollTo(0,_y)};
+const _ri=renderAll;renderAll=function(){if(window.dpHold&&dpHold()){window._rq=1;return}const _y=window.scrollY,_c=window._lc===cur;window._lc=cur;if(cur==='im'){_ri();fillJump('im')}else if(cur==='bb'){renderBB();fillJump('bb')}else if(cur==='set')renderSet();else renderOV();renderTop();window._sig=JSON.stringify([state,bb,plans,sp,ord,colm,cfg]);if(_c&&Math.abs(window.scrollY-_y)>2)window.scrollTo(0,_y)};
 (()=>{const IOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);let M=null;
 const pad=n=>String(n).padStart(2,'0'),B='font:inherit;border:1px solid var(--card-border);background:transparent;color:inherit;border-radius:10px;cursor:pointer;padding:0 4px;min-width:36px;height:36px';
 function close(){if(M){M.remove();M=null}}
 function open(el){close();let sel=el.value||'',[y,m]=(sel||today()).split('-').map(Number);
- M=document.createElement('div');M.style.cssText='position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px';
+ M=document.createElement('div');M.setAttribute('data-modal','');M.style.cssText='position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px';
  const box=document.createElement('div');box.style.cssText='background:var(--paper);color:var(--ink);border:1px solid var(--card-border);border-radius:18px;padding:14px;width:min(340px,100%);box-shadow:0 20px 60px rgba(0,0,0,.4);font-family:inherit';M.appendChild(box);
  const draw=()=>{const first=(new Date(y,m-1,1).getDay()+6)%7,nd=new Date(y,m,0).getDate(),t=today();
   let h=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><button data-a="p" style="${B}">‹</button><b>${new Date(y,m-1,1).toLocaleDateString(undefined,{month:'long',year:'numeric'})}</b><button data-a="n" style="${B}">›</button></div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:.85rem">`+'MTWTFSS'.split('').map(c=>`<span style="opacity:.5;padding:4px 0">${c}</span>`).join('');
@@ -1206,6 +1248,97 @@ const _rtop=renderTop;renderTop=function(){_rtop();try{const s=streak(),f=docume
 {let y=scrollY;addEventListener('scroll',()=>{const n=scrollY;if(Math.abs(n-y)>8){document.body.classList.toggle('sdn',n>y&&n>400);y=n}},{passive:true})}
 applyFx();
 document.querySelectorAll('.tabs button').forEach(b=>{if(b.textContent.includes('🔍')){b.innerHTML=I('search',20);b.setAttribute('aria-label','Search topics')}});{const tt=document.getElementById('toTop');if(tt)tt.innerHTML=I('up',18)}
+
+/* ===== navigation, settings screen, freeze, AI sheet, tips ===== */
+Object.assign(IC,{sparkle:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/>',home:'<path d="M3 11 12 4l9 7v9H3z"/>',book:'<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/>',vid:'<rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>',logout:'<path d="M9 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4M16 8l4 4-4 4M20 12H9"/>',snow:'<path d="M12 2v20M4.2 7l15.6 10M4.2 17 19.8 7"/><path d="m9 4 3 2 3-2M9 20l3-2 3 2"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',palette:'<circle cx="12" cy="12" r="9"/><circle cx="8" cy="10" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16" cy="10" r="1"/>',repeat:'<path d="M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',bulb:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10c1 1 1 2 1 3h6c0-1 0-2 1-3a6 6 0 0 0-4-10z"/>',save:'<path d="M12 3v12M7 10l5 5 5-5M4 20h16"/>',trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',print:'<path d="M6 9V3h12v6M6 18H4v-6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6h-2M7 14h10v7H7z"/>',film:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/>'});
+/* --- side navigation + drawer (phone) --- */
+function setupNav(){const nav=document.querySelector('.tabs');if(!nav||nav.dataset.ok)return;nav.dataset.ok=1;
+ const lab={'t-ov':['home','Overview'],'t-im':['book','IM'],'t-bb':['vid','B&B'],'t-s':['search','Search']};
+ nav.querySelectorAll('button').forEach(b=>{const l=lab[b.id];if(l){b.innerHTML='<span class="ti">'+I(l[0],20)+'</span><span class="tl">'+l[1]+'</span>';if(b.id==='t-s'){b.style.minWidth='0'}}});
+ nav.querySelectorAll('#t-s .tl').forEach(e=>e.classList.add('tls'));
+ nav.insertAdjacentHTML('afterbegin','<button class="wo navtoggle" id="navTog" onclick="toggleNav()" aria-label="Collapse side navigation" title="Collapse"></button>');
+ nav.insertAdjacentHTML('beforeend','<div class="wo sep"></div><button class="wo" id="t-set" onclick="show(\'set\')"><span class="ti">'+I('gear',20)+'</span><span class="tl">Settings</span></button><button class="wo" onclick="signOut()"><span class="ti">'+I('logout',20)+'</span><span class="tl">Sign out</span></button><div class="wo navemail" id="navEmail"></div>');
+ document.body.insertAdjacentHTML('beforeend','<div id="drawerBg"></div><aside id="drawer" role="dialog" aria-label="Menu" aria-hidden="true"><div class="dh"><b>Menu</b><button id="drawerX" aria-label="Close menu">'+I('x',18)+'</button></div><div class="de" id="drawerEmail"></div><button class="di" onclick="goSettings()">'+I('gear',18)+' Settings</button><button class="di" onclick="closeDrawer();signOut()">'+I('logout',18)+' Sign out</button></aside><div id="drawerStrip"></div>');
+ let c=false;try{c=localStorage.getItem('navc')==='1'}catch(e){}document.documentElement.classList.toggle('navc',c);navArrow()}
+function navArrow(){const b=document.getElementById('navTog');if(b)b.innerHTML=I(document.documentElement.classList.contains('navc')?'right':'left',18)}
+function toggleNav(){const h=document.documentElement;h.classList.toggle('navc');try{localStorage.setItem('navc',h.classList.contains('navc')?'1':'0')}catch(e){}navArrow()}
+const goSettings=()=>{closeDrawer();show('set')};
+(()=>{let open=false,st=null,noclick=0;const D=()=>document.getElementById('drawer'),B=()=>document.getElementById('drawerBg'),W=()=>(D()?D().offsetWidth:300)+4,anim=()=>!document.documentElement.classList.contains('anim-off');
+ const set=(x,a)=>{const d=D(),b=B();if(!d)return;d.style.transition=a?'':'none';b.style.transition=a?'':'none';d.style.transform='translateX('+x+'px)';const pr=Math.max(0,Math.min(1,1-x/W()));b.style.opacity=pr;b.style.pointerEvents=pr>.02?'auto':'none'};
+ window.openDrawer=()=>{if(!D())return;open=true;D().classList.add('open');D().setAttribute('aria-hidden','false');const e=document.getElementById('drawerEmail');if(e)e.textContent=window._email||'';set(0,anim())};
+ window.closeDrawer=(q)=>{if(!D())return;open=false;D().classList.remove('open');D().setAttribute('aria-hidden','true');set(W(),!q&&anim())};
+ window.toggleDrawer=()=>open?closeDrawer():openDrawer();
+ document.addEventListener('pointerdown',e=>{if(innerWidth>=1000||(e.pointerType==='mouse'&&e.button!==0))return;const t=e.target;if(!t.closest)return;const src=t.closest('.dbtn')?'btn':t.closest('#drawerStrip')?'strip':t.closest('#drawer')?'panel':'';if(!src)return;st={x:e.clientX,y:e.clientY,base:open?0:W(),drag:false,id:e.pointerId,h:[[e.clientX,performance.now()]],el:t}},true);
+ document.addEventListener('pointermove',e=>{if(!st||e.pointerId!==st.id)return;const dx=e.clientX-st.x,dy=e.clientY-st.y;if(!st.drag){if(Math.abs(dx)>8&&Math.abs(dx)>Math.abs(dy)*1.3){st.drag=true;if(!open)D().classList.add('open');try{st.el.setPointerCapture(e.pointerId)}catch(x){}}else if(Math.abs(dy)>12){st=null;return}}
+  if(st.drag){const x=Math.max(0,Math.min(W(),st.base+dx));st.cur=x;set(x,false);st.h.push([e.clientX,performance.now()]);if(st.h.length>6)st.h.shift();e.preventDefault()}},true);
+ const end=e=>{if(!st||e.pointerId!==st.id)return;const s2=st;st=null;if(!s2.drag)return;noclick=Date.now();const h=s2.h,v=h.length>1?(h[h.length-1][0]-h[0][0])/Math.max(1,h[h.length-1][1]-h[0][1]):0,pr=1-(s2.cur||0)/W();if(v<-.35)openDrawer();else if(v>.35)closeDrawer();else if(pr>.5)openDrawer();else closeDrawer()};
+ document.addEventListener('pointerup',end,true);document.addEventListener('pointercancel',end,true);
+ document.addEventListener('click',e=>{if(Date.now()-noclick<350){e.stopPropagation();e.preventDefault();return}const t=e.target;if(t.closest&&(t.closest('#drawerX')||t.id==='drawerBg'))closeDrawer()},true);
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
+ addEventListener('resize',()=>{if(innerWidth>=1000)closeDrawer(true)});setTimeout(()=>{if(D())set(W(),false)},0)})();
+/* --- freeze (rest days) --- */
+const snowBtn=()=>`<button class="tt snow${restSet().has(today())?' on':''}" onclick="openFreeze()" aria-label="Freeze days" title="Freeze days (rest days)">${I('snow',18)}</button>`;
+function frzBody(){const t=today(),m=t.slice(0,7),left=REST_MAX-restIn(m),on=restSet().has(t),up=(cfg.rest||[]).filter(d=>d>=addDays(t,-7));
+ return `<p style="margin:0 0 10px;font-size:.88rem;line-height:1.5">A frozen day is a rest day: it keeps your streak alive without you studying, and it does not add to the streak. You get <b>${REST_MAX} freezes per month</b> (you have <b>${left}</b> left this month). You can freeze today or a day ahead, but not a day you already studied or a day that has passed.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" onclick="toggleRest()">${I('snow',15)} ${on?'Undo freeze today':'Freeze today'}</button><label class="btn">${I('cal',15)} Freeze another day<input type="date" onchange="toggleRest(this.value)"></label></div>${up.length?'<div style="margin-top:12px;font-size:.78rem;opacity:.7">Your recent and upcoming freezes</div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">'+up.map(d=>`<button class="btn" onclick="toggleRest('${d}')" title="Remove this freeze">${fmtD(d)} ${I('x',12)}</button>`).join('')+'</div>':'<div style="margin-top:10px;font-size:.78rem;opacity:.6">No freezes set yet.</div>'}`}
+function sheet(id,title,body,small){closeSheet(id);const w=document.createElement('div');w.id=id;w.className='sheetbg';w.setAttribute('data-modal','');w.innerHTML=`<div class="sheet${small?' small':''}" role="dialog" aria-label="${title}"><div class="sh2"><b>${title}</b><button class="rm" aria-label="Close" data-x>${I('x',16)}</button></div><div class="sb2">${body}</div></div>`;w.addEventListener('click',e=>{if(e.target===w||e.target.closest('[data-x]'))closeSheet(id)});document.body.appendChild(w);const k=e=>{if(e.key==='Escape'){closeSheet(id);document.removeEventListener('keydown',k)}};document.addEventListener('keydown',k)}
+function closeSheet(id){const w=document.getElementById(id);if(!w)return;if(document.documentElement.classList.contains('anim-off')){w.remove();return}w.classList.add('out');setTimeout(()=>w.remove(),180)}
+const openFreeze=()=>sheet('frzSheet','Freeze days',frzBody(),true);
+function frzRefresh(){const w=document.querySelector('#frzSheet .sb2');if(w)w.innerHTML=frzBody()}
+const openAI=()=>sheet('aiSheet','Plan with AI',aiBody());
+/* --- settings screen --- */
+let SO={acct:true,app:true,gaps:true,plans:false,tips:false,bk:false,rst:false};
+const setT=k=>{SO[k]=!SO[k];window._sgNew=SO[k]?k:'';renderSet()};
+const sg=(k,ic,title,body)=>{const n=window._sgNew===k;return `<section class="card sgrp" data-sec="${k}"><button class="sgh" onclick="setT('${k}')" aria-expanded="${!!SO[k]}">${I(ic,18)}<b>${title}</b><span>${SO[k]?I('down',16):I('right',16)}</span></button>${SO[k]?'<div class="sgb'+(n?' new':'')+'">'+body+'</div>':''}</section>`};
+const sr=(ic,t,c,h)=>`<div class="srow">${I(ic,18)}<div class="st"><span>${t}</span>${h?'<small>'+h+'</small>':''}</div>${c}</div>`;
+function renderSet(){const el=document.getElementById('v-set');if(!el)return;const sf=!!localStorage.getItem('im_bnb_safety');
+ const html=`<div class="sethead"><button class="btn" onclick="show('ov')">${I('left',16)} Overview</button><h2>Settings</h2></div>`
+ +sg('acct','user','Account',sr('user','Signed in as',`<span class="mail">${escH(window._email||'')}</span>`))
+ +sg('app','palette','Appearance',sr('cal','Date picker',`<button class="btn" onclick="setDp()">${cfg.dp==='app'?'In-app calendar':'iOS native'}</button>`,'iOS native or the built-in calendar')+sr('sparkle','Liquid glass',`<button class="btn" onclick="setGlass()">${cfg.glass===false?'Off':'On'}</button>`)+sr('film','Animations',`<button class="btn" onclick="setAnim()">${cfg.anim===false?'Off':'On'}</button>`))
+ +sg('gaps','repeat','Review gaps',sr('repeat','First review after',`<span class="gi"><input type="number" min="1" value="${cfg.r1}" onchange="setCfg('r1',this.value)"> days</span>`)+sr('repeat','Second review after',`<span class="gi"><input type="number" min="1" value="${cfg.r2}" onchange="setCfg('r2',this.value)"> days</span>`)+sr('list','Rating-based gaps',`<button class="btn" onclick="setSmart()">${cfg.smart===false?'Off':'On'}</button>`,'Use your confident / shaky / weak rating to set the gap'))
+ +sg('plans','list','Plan tools',plansBody())
+ +sg('tips','bulb','Tips and guidance',sr('bulb','Show tips',`<button class="btn" onclick="toggleTips()">${cfg.tipsOff?'Off':'On'}</button>`,'Short pointers to features you have not used yet')+sr('repeat','Show tips again',`<button class="btn" onclick="resetTips()">Reset</button>`))
+ +sg('bk','save','Backup',sr('save','Backup file',`<span style="display:flex;gap:6px"><button class="btn" onclick="exportData()">Export</button><button class="btn" onclick="importPick()">Import</button></span><input type="file" id="impF" accept="application/json,.json" hidden onchange="importData(this)">`)+sr('undo','Safety copy',sf?'<button class="btn" onclick="restoreSafety()">Restore</button>':'<button class="btn" disabled>Restore</button>',sf?'Saved before your last import':'None yet. One is saved automatically before each import.'))
+ +sg('rst','trash','Reset progress',sr('trash','Erase progress',`<button class="btn" style="color:#d9534f" onclick="askReset()">Reset…</button>`,'Asks you to type IM or BB first'))
+ +`<div class="card" style="margin:12px 0">${sr('print','Print / Save as PDF','<button class="btn" onclick="window.print()">Print</button>').replace('border-top:1px solid var(--card-border)','')}</div>`;
+ el.innerHTML=html;window._sgNew=''}
+function toggleTips(){cfg.tipsOff=!cfg.tipsOff;saveKey('tipsOff')}
+function resetTips(){cfg.tipsSeen={};cfg.tipsOff=false;if(docRef)docRef.set({settings:{tipsSeen:{},tipsOff:false}},{merge:true}).catch(()=>{});hideTip();renderAll();toast('Tips will show again');schedTip()}
+/* --- tips --- */
+const TIPS=[
+{id:'search',v:'*',sel:'#topbar [aria-label="Search topics"]',t:'Search',x:'Find any lecture or video. Typos and abbreviations like MI or COPD work.'},
+{id:'streak',v:'*',sel:'#topbar .streak',t:'Your streak',x:'Study something each day to build your streak.'},
+{id:'freeze',v:'*',sel:'#topbar .snow',t:'Freeze a day',x:'Need a day off? Freeze it to keep your streak alive.',u:()=>(cfg.rest||[]).length>0},
+{id:'pace',v:'ov',sel:'[data-tip=pace]',t:'Exam pace',x:'Set your exam date to see your daily pace, then use Auto-plan to fill your calendar.',u:()=>!!cfg.exam},
+{id:'ai',v:'ov',sel:'[data-tip=ai]',t:'Plan with AI',x:'Export your topics, let an AI build a plan, and import it back.'},
+{id:'goal',v:'ov',sel:'[data-tip=goal]',t:'Weekly goal',x:'Aim for a number of study days each week. You can change it with − and ＋.'},
+{id:'heat',v:'ov',sel:'[data-sec=heat]',t:'Heatmap',x:'See what you finished each day. Tap a day for details, and use the arrows to go back in time.'},
+{id:'menu',v:'im',sel:'#v-im .rm',t:'More actions',x:'Tap ⋯ to add a topic to your plan or pause it.',u:()=>Object.keys(plans).length>0||Object.keys(sp).length>0},
+{id:'date',v:'im',sel:'#v-im .c-date',t:'Date studied',x:'Add the day you studied it. Your reviews are scheduled from this date.',u:()=>Object.values(state).some(x=>x&&x.date)},
+{id:'rating',v:'im',sel:'#v-im .c-rate',t:'Rate it',x:'Green = confident, yellow = shaky, red = weak. Weaker topics come back sooner.',u:()=>Object.values(state).some(x=>x&&x.rating)},
+{id:'reviews',v:'im',sel:'#v-im .c-r1',t:'Reviews',x:'Tick R1 and R2 when you have done your reviews.',u:()=>Object.values(state).some(x=>x&&x.r1)},
+{id:'move',v:'im',sel:'#v-im .sc button',t:'Move a system',x:'Use ⋯ on a system to move it to the top or bottom, or pause the whole system.',u:()=>Object.keys(ord).length>0},
+{id:'pause',v:'im',sel:'#v-im .pzb',t:'Pause a list',x:'Not studying IM right now? Pause the whole list. Your own pauses come back when you resume.',u:()=>!!(cfg.pz&&(cfg.pz.im||cfg.pz.bb))},
+{id:'gaps',v:'set',sel:'[data-sec=gaps]',t:'Review gaps',x:'Choose how many days until your first and second review.'},
+{id:'look',v:'set',sel:'[data-sec=app]',t:'Appearance',x:'Choose the date picker, liquid glass and animations.',u:()=>!!cfg.dp||cfg.glass===false||cfg.anim===false},
+{id:'backup',v:'set',sel:'[data-sec=bk]',t:'Backup',x:'Export a backup file, or restore one. A safety copy is kept before every import.'}];
+let _tipT=0,_tipEl=null,_tipId='',_lastAct=0;
+['pointerdown','keydown','touchmove','scroll'].forEach(ev=>addEventListener(ev,()=>{_lastAct=Date.now();if(_tipEl&&ev==='scroll')tipPos()},{passive:true,capture:true}));
+const tipBusy=()=>{const a=document.activeElement;return !!(document.querySelector('[data-modal],#sov,#rmenu,#drawer.open')||(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&a.type!=='checkbox'))};
+const tipVis=el=>{if(!el)return false;const r=el.getBoundingClientRect(),b=innerWidth<1000?96:8;return r.width>0&&r.top>2&&r.bottom<innerHeight-b&&r.left>=0&&r.right<=innerWidth};
+function schedTip(){clearTimeout(_tipT);_tipT=setTimeout(maybeTip,1500)}
+function maybeTip(){if(_tipEl||cfg.tipsOff||!docRef||!document.body.classList.contains('authed'))return;if(Date.now()-_lastAct<900||tipBusy()){schedTip();return}
+ const seen=Object.assign({},cfg.tipsSeen||{});let q=false;let pick=null;
+ for(const T of TIPS){if(seen[T.id])continue;if(T.v!=='*'&&T.v!==cur)continue;if(T.u&&T.u()){seen[T.id]=1;q=true;continue}const el=document.querySelector(T.sel);if(!tipVis(el))continue;pick=[T,el];break}
+ if(q){cfg.tipsSeen=seen;try{docRef.set({settings:{tipsSeen:seen}},{merge:true})}catch(e){}}
+ if(pick)showTip(pick[0],pick[1])}
+function showTip(T,el){hideTip(true);const d=document.createElement('div');d.id='tip';d.setAttribute('role','status');d.innerHTML=`<b>${T.t}</b><p>${T.x}</p><div class="tb"><button class="tg" onclick="tipGot()">Got it</button><button class="tg alt" onclick="tipSkip()">Skip all tips</button></div><i class="tc"></i>`;document.body.appendChild(d);_tipEl=d;_tipId=T.id;d._T=T;tipPos();requestAnimationFrame(()=>d.classList.add('in'))}
+function tipPos(){const d=_tipEl;if(!d)return;const el=document.querySelector(d._T.sel);if(!tipVis(el)){hideTip();return}const r=el.getBoundingClientRect(),w=Math.min(290,innerWidth-16);d.style.width=w+'px';const h=d.offsetHeight,below=r.bottom+h+14<innerHeight-(innerWidth<1000?96:8),top=below?r.bottom+12:r.top-h-12;let left=Math.max(8,Math.min(innerWidth-w-8,r.left+r.width/2-w/2));if(top<8){hideTip();return}d.style.top=top+'px';d.style.left=left+'px';d.dataset.pos=below?'b':'a';d.style.setProperty('--cx',Math.max(14,Math.min(w-14,r.left+r.width/2-left))+'px')}
+function hideTip(now){const d=_tipEl;_tipEl=null;if(!d)return;if(now||document.documentElement.classList.contains('anim-off')){d.remove();return}d.classList.remove('in');setTimeout(()=>d.remove(),200)}
+function tipGot(){const id=_tipId;hideTip();cfg.tipsSeen=Object.assign({},cfg.tipsSeen||{},{[id]:1});if(docRef)docRef.set({settings:{tipsSeen:cfg.tipsSeen}},{merge:true}).catch(()=>{});schedTip()}
+function tipSkip(){hideTip();cfg.tipsOff=true;saveKey('tipsOff')}
+setInterval(()=>{if(_tipEl&&(tipBusy()||!tipVis(document.querySelector(_tipEl._T.sel))))hideTip()},700);
+const _rt3=renderTop;renderTop=function(){_rt3();try{const e=document.getElementById('navEmail');if(e)e.textContent=window._email||'';if(window._ping){window._ping=0;const b=document.querySelector('#topbar .snow.on');if(b&&!document.documentElement.classList.contains('anim-off')){b.classList.add('ping')}}schedTip()}catch(x){}};
+setupNav();
 try{show(localStorage.getItem('tab')||'ov')}catch(e){show('ov')}
 
 (()=>{const q=new URLSearchParams(location.search);if(q.get('mode')==='resetPassword'&&q.get('oobCode'))window._reset={code:q.get('oobCode')}})();
@@ -1222,7 +1355,7 @@ function leaveReset(msg){window._reset=null;window._resetOK=0;try{history.replac
 function showChecking(){document.body.classList.remove('authed');const b=document.getElementById('systems');if(b)b.innerHTML='<div class="state-msg" id="chk">Checking sign-in…</div>'}
 function slowCheck(){const b=document.getElementById('systems');if(!b||document.body.classList.contains('authed'))return;b.innerHTML='<div class="login"><div class="appname">📋 Study Checklist</div><div class="msg">Still checking your sign-in. This can take a moment on a slow connection or when the phone is waking up. You have not been signed out.</div><button onclick="showChecking();clearTimeout(window._chkT);window._chkT=setTimeout(slowCheck,8000)">Keep waiting</button><a href="#" onclick="return goSignIn()">Go to sign-in</a></div>'}
 function goSignIn(){clearTimeout(window._chkT);showLogin();return false}
-function doSignedOut(){const lost=(()=>{try{return localStorage.getItem('wasSignedIn')==='1'}catch(e){return false}})();try{localStorage.removeItem('wasSignedIn')}catch(e){}wipeLocal();window._email='';window._uid='';AM='in';window._em='';showLogin(lost?'Your saved sign-in was not found on this device. The browser may have cleared its storage. Please sign in again.':'')}
+function doSignedOut(){const lost=!window._explicit&&(()=>{try{return localStorage.getItem('wasSignedIn')==='1'}catch(e){return false}})();window._explicit=0;try{localStorage.removeItem('wasSignedIn')}catch(e){}wipeLocal();window._email='';window._uid='';AM='in';window._em='';showLogin(lost?'Your saved sign-in was not found on this device. The browser may have cleared its storage. Please sign in again.':'')}
 const remPref=()=>{try{return localStorage.getItem('rememberMe')!=='0'}catch(e){return true}};
 function initFB(){
   firebase.initializeApp(firebaseConfig);
