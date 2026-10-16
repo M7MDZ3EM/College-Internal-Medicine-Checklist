@@ -576,9 +576,11 @@ window.dispatchEvent(new Event('fbready'));
 
   /* ===== live page-slide (pager) ===== */
   .view.pg{display:block!important}
-  .tabs .pill{display:none;position:absolute;pointer-events:none;z-index:0}
-  .tabs.pgd button{position:relative;z-index:1}.tabs.pgd button.on{background:transparent!important;border-color:transparent!important;box-shadow:none!important}
-  html.dragging .jt,html.dragging .sc button{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:var(--paper)!important}
+  .tabs .pill{display:none;position:absolute;pointer-events:none;z-index:2}
+  .tabs .tl,.tabs .ti{position:relative;z-index:3}.tabs .tl{display:inline-block}
+  .tabs.pgd button,.tabs.nt button{transition:none!important}
+  .tabs.pgd button.on{background:transparent!important;border-color:transparent!important;box-shadow:none!important}
+  html.dragging .jt,html.dragging .sc button{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
   html.dragging body{overflow-anchor:none}
   .dbtn{position:relative}.dbtn svg{transition:transform .25s}html.menu-open .dbtn{z-index:8002}html.menu-open .dbtn svg{transform:rotate(180deg)}#drawer .dh{padding-left:52px}
 </style>
@@ -1295,7 +1297,7 @@ function toggleNav(){const h=document.documentElement;h.classList.toggle('navc')
 const goSettings=()=>{closeDrawer();show('set')};
 (()=>{
 const $=id=>document.getElementById(id),ORDER=['ov','im','bb'],D=()=>$('drawer'),BG=()=>$('drawerBg');
-let lay=null,x=0,vx=0,raf=0,open=false,st=null,noclick=0;
+let lay=null,x=0,vx=0,raf=0,open=false,st=null,noclick=0,pend=null,kk=320;
 const anim=()=>!document.documentElement.classList.contains('anim-off'),authed=()=>document.body.classList.contains('authed'),DW=()=>Math.min(innerWidth*.75,340);
 const PS=window._PS={};Object.defineProperty(window,'_lay',{get:()=>lay,configurable:true});
 addEventListener('scroll',()=>{if(!lay&&!window._pgq)PS[cur]=scrollY},{passive:true});
@@ -1314,32 +1316,41 @@ function detachB(){if(!lay||!lay.B)return;unfix(lay.B);lay.B=null;lay.Bv='';if(l
 const neighbor=sign=>{const i=ORDER.indexOf(cur);if(cur==='set')return sign>0?'ov':'';const j=i-sign;return j>=0&&j<ORDER.length?ORDER[j]:''};
 const rb=d=>{const W=lay.w,a=Math.abs(d);return Math.sign(d)*(1-1/(a/(W*.6)+1))*W*.3};
 /* bottom bar pill that travels with the finger */
-function pillOn(){const T=document.querySelector('.tabs');if(!T||innerWidth>=1000)return;const p=T.querySelector('.pill'),b=$('t-'+cur);if(!p||!b)return;const cs=getComputedStyle(b),o=[...T.querySelectorAll('button')].find(e=>e!==b&&/^t-(ov|im|bb)$/.test(e.id));
- p.style.cssText='display:block;left:'+b.offsetLeft+'px;top:'+b.offsetTop+'px;width:'+b.offsetWidth+'px;height:'+b.offsetHeight+'px;background:'+cs.backgroundColor+';border:'+cs.border+';box-shadow:'+cs.boxShadow+';border-radius:'+cs.borderRadius;
- lay.pill={p,T,b0:b,b1:null,c0:rgb(cs.color),c1:o?rgb(getComputedStyle(o).color):rgb(cs.color),l0:b.offsetLeft,w0:b.offsetWidth};T.classList.add('pgd')}
-function pillProg(pr){const P=lay&&lay.pill;if(!P||!P.b1)return;P.p.style.left=(P.l0+(P.b1.offsetLeft-P.l0)*pr)+'px';P.p.style.width=(P.w0+(P.b1.offsetWidth-P.w0)*pr)+'px';P.b0.style.color=mix(P.c0,P.c1,pr);P.b1.style.color=mix(P.c1,P.c0,pr)}
-function pillOff(L){const P=L&&L.pill;if(!P)return;P.T.classList.remove('pgd');P.p.style.cssText='';P.b0.style.color='';if(P.b1)P.b1.style.color=''}
+function pillOn(){const T=document.querySelector('.tabs');if(!T||innerWidth>=1000)return;const p=T.querySelector('.pill'),b=$('t-'+cur);if(!p||!b)return;const cs=getComputedStyle(b),btns=ORDER.map(v=>$('t-'+v)),off=btns.find(e=>e!==b),bg=cs.backgroundColor,bd=cs.border,sh=cs.boxShadow,br=cs.borderRadius,c0=rgb(cs.color),c1=off?rgb(getComputedStyle(off).color):c0;
+ p.style.cssText='display:block;left:'+b.offsetLeft+'px;top:'+b.offsetTop+'px;width:'+b.offsetWidth+'px;height:'+b.offsetHeight+'px;background:'+bg+';border:'+bd+';box-shadow:'+sh+';border-radius:'+br;
+ const tr=T.getBoundingClientRect().left,labs=btns.map(e=>{const lb=e&&e.querySelector('.tl');if(!lb)return null;const r=lb.getBoundingClientRect();return {lb,lL:r.left-tr,lw:r.width}});
+ lay.pill={p,T,btns,labs,b0:b,b1:null,c0,c1,l0:b.offsetLeft,w0:b.offsetWidth};T.classList.add('pgd')}
+function pillProg(pr){const P=lay&&lay.pill;if(!P)return;const bt=P.b1||P.b0,l=P.l0+(bt.offsetLeft-P.l0)*pr,w=P.w0+(bt.offsetWidth-P.w0)*pr,r=l+w;P.p.style.left=l+'px';P.p.style.width=w+'px';
+ const on='rgb('+P.c0.join(',')+')',off='rgb('+P.c1.join(',')+')';P.labs.forEach(q=>{if(!q)return;const a=Math.max(0,Math.min(q.lw,l-q.lL)),z=Math.max(a,Math.min(q.lw,r-q.lL)),st=q.lb.style;st.backgroundImage='linear-gradient(90deg,'+off+' 0,'+off+' '+a+'px,'+on+' '+a+'px,'+on+' '+z+'px,'+off+' '+z+'px,'+off+' 100%)';st.webkitBackgroundClip='text';st.backgroundClip='text';st.webkitTextFillColor='transparent';st.color='transparent'})}
+function pillOff(L){const P=L&&L.pill;if(!P)return;const T=P.T;T.classList.add('nt');T.classList.remove('pgd');P.p.style.cssText='';P.labs.forEach(q=>{if(!q)return;const st=q.lb.style;st.backgroundImage='';st.webkitBackgroundClip='';st.backgroundClip='';st.webkitTextFillColor='';st.color=''});void T.offsetWidth;requestAnimationFrame(()=>requestAnimationFrame(()=>T.classList.remove('nt')))}
 /* side menu */
 function drawerPos(vis){const d=D(),b=BG();if(!d)return;const W=DW();d.classList.add('open');document.documentElement.classList.toggle('menu-open',vis>2);d.style.transition='none';b.style.transition='none';d.style.transform='translateX('+(vis-W)+'px)';const pr=Math.max(0,Math.min(1,vis/W));b.style.opacity=pr;b.style.pointerEvents=pr>.02?'auto':'none'}
 function hideDrawer(){const d=D(),b=BG();if(!d)return;document.documentElement.classList.remove('menu-open');d.classList.remove('open','drag');d.style.transform='translateX(-110%)';d.setAttribute('aria-hidden','true');b.style.opacity=0;b.style.pointerEvents='none'}
 function apply(){if(!lay)return;const W=lay.w;if(lay.drawer){const vis=Math.max(0,Math.min(DW(),x));lay.A.style.transform='translateX('+vis+'px)';drawerPos(vis);return}
  let ax=x;if(lay.B)lay.B.style.transform='translateX('+(x+(x<0?W:-W))+'px)';else ax=rb(x);lay.A.style.transform='translateX('+ax+'px)';pillProg(Math.min(1,Math.abs(x)/W))}
-function unlay(){if(!lay)return;const L=lay;lay=null;pillOff(L);unfix(L.B);unfix(L.A);document.body.style.minHeight=L.mh;document.documentElement.classList.remove('dragging');x=0;vx=0;window.scrollTo(0,L.Y)}
-function finishTo(v){const L=lay;lay=null;pillOff(L);unfix(L.A);unfix(L.B);document.body.style.minHeight=L.mh;document.documentElement.classList.remove('dragging');x=0;vx=0;window._pgq=1;try{show(v)}finally{window._pgq=0}window.scrollTo(0,L.Bs);PS[v]=L.Bs}
+function unlay(){if(!lay)return;const L=lay;lay=null;pillOff(L);unfix(L.B);unfix(L.A);document.body.style.minHeight=L.mh;document.documentElement.classList.remove('dragging');x=0;vx=0;kk=320;window.scrollTo(0,L.Y)}
+function flushPend(){const q=pend;pend=null;kk=320;if(q&&q!==cur&&!lay)tabTap(q)}
+const endCancel=()=>{unlay();flushPend()};
+function finishTo(v){const L=lay;lay=null;pillOff(L);unfix(L.A);unfix(L.B);document.body.style.minHeight=L.mh;document.documentElement.classList.remove('dragging');x=0;vx=0;window._pgq=1;try{show(v)}finally{window._pgq=0}window.scrollTo(0,L.Bs);PS[v]=L.Bs;kk=320;flushPend()}
 function closedDrawer(){open=false;hideDrawer();unlay()}
 function openedDrawer(){open=true;const d=D();d.setAttribute('aria-hidden','false');const e=$('drawerEmail');if(e)e.textContent=window._email||''}
-function run(target,v0,done){cancelAnimationFrame(raf);raf=0;vx=v0||0;if(!anim()){x=target;apply();if(done)done();return}let last=performance.now();const k=320,c=2*Math.sqrt(k);const step=t=>{const dt=Math.min(.032,(t-last)/1000);last=t;vx+=(-k*(x-target)-c*vx)*dt;x+=vx*dt;apply();if(Math.abs(x-target)<.4&&Math.abs(vx)<10){x=target;apply();raf=0;if(done)done();return}raf=requestAnimationFrame(step)};raf=requestAnimationFrame(step)}
-window._abortLay=()=>{cancelAnimationFrame(raf);raf=0;st=null;if(!lay)return;if(open||lay.drawer){closedDrawer()}else unlay()};
+function run(target,v0,done){cancelAnimationFrame(raf);raf=0;vx=v0||0;if(!anim()){x=target;apply();if(done)done();return}let last=performance.now();const step=t=>{const dt=Math.min(.032,(t-last)/1000);last=t;const k=kk,c=2*Math.sqrt(k);vx+=(-k*(x-target)-c*vx)*dt;x+=vx*dt;apply();if(Math.abs(x-target)<.4&&Math.abs(vx)<10){x=target;apply();raf=0;if(done)done();return}raf=requestAnimationFrame(step)};raf=requestAnimationFrame(step)}
+window._abortLay=()=>{cancelAnimationFrame(raf);raf=0;st=null;pend=null;kk=320;if(!lay)return;if(open||lay.drawer){closedDrawer()}else unlay()};
 window.openDrawer=()=>{if(!authed()||innerWidth>=1000)return;if(open&&lay&&lay.drawer)return;if(lay&&!lay.drawer)return;engage();lay.drawer=true;x=0;apply();run(DW(),0,openedDrawer)};
 window.closeDrawer=q=>{if(!open&&!(lay&&lay.drawer))return;if(q||!anim()){cancelAnimationFrame(raf);raf=0;closedDrawer();return}open=false;run(0,0,closedDrawer)};
 window.toggleDrawer=()=>(open&&!raf)?closeDrawer():openDrawer();
-window.tabTap=v=>{if(lay||!authed()||innerWidth>=1000||!anim()||v===cur||ORDER.indexOf(cur)<0||ORDER.indexOf(v)<0){show(v);return}engage();attachTo(v);x=0;apply();const dirn=ORDER.indexOf(v)>ORDER.indexOf(cur)?-1:1;run(dirn*lay.w,0,()=>finishTo(v))};
+window.tabTap=v=>{
+ if(lay&&!lay.drawer&&raf&&!st){const dest=lay.goal==='commit'?lay.Bv:cur;if(v===dest){pend=null;return}
+  if(v===cur&&lay.goal==='commit'){pend=null;lay.goal='cancel';run(0,vx,endCancel);return}
+  pend=v;kk=640;return}
+ if(lay||!authed()||innerWidth>=1000||!anim()||v===cur||ORDER.indexOf(cur)<0||ORDER.indexOf(v)<0){show(v);return}
+ engage();attachTo(v);x=0;apply();lay.goal='commit';const dirn=ORDER.indexOf(v)>ORDER.indexOf(cur)?-1:1;run(dirn*lay.w,0,()=>finishTo(v))};
 /* where a swipe may start */
 const blocked=t=>{if(!t||!t.closest)return true;if(t.closest('textarea,select,[contenteditable],[data-modal],#sov,#rmenu,#tip,.tabs,#toTop,.jump,.sc,.rm,[data-sec=heat],.cal,[type=range],.sheet'))return true;const inp=t.closest('input');if(inp){const ty=(inp.type||'text').toLowerCase();if(!/^(checkbox|radio|date|button|submit)$/.test(ty)||document.activeElement===inp)return true}for(let e=t;e&&e!==document.body;e=e.parentElement){const cs=getComputedStyle(e);if((cs.overflowX==='auto'||cs.overflowX==='scroll')&&e.scrollWidth>e.clientWidth+2)return true}return false};
 const selActive=()=>{try{return String(getSelection()).length>0}catch(e){return false}},kbdUp=()=>{const a=document.activeElement;return !!((a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&!/^(checkbox|button|radio)$/.test(a.type))||(window.visualViewport&&visualViewport.height<innerHeight*.75))};
 const vel=h=>h.length>1?(h[h.length-1][0]-h[0][0])/Math.max(1,h[h.length-1][1]-h[0][1])*1000:0;
 const gStart=(px,py,t)=>{if(st||innerWidth>=1000||!authed()||!t||!t.closest)return;
- if(raf&&lay){cancelAnimationFrame(raf);raf=0;st={x:px,y:py,mode:'drag',base:x,take:true,dx:0,dy:0,h:[[px,performance.now()]]};return}
+ if(raf&&lay){if(t.closest('.tabs'))return;pend=null;kk=320;cancelAnimationFrame(raf);raf=0;st={x:px,y:py,mode:'drag',base:x,take:true,dx:0,dy:0,h:[[px,performance.now()]]};return}
  if(open){if(!(t.closest('#drawer')||t.id==='drawerBg'))return}else if(blocked(t)||selActive()||kbdUp())return;
  st={x:px,y:py,mode:'',base:open?x:0,dx:0,dy:0,h:[[px,performance.now()]]}};
 function neighborFor(){if(lay.drawer&&open)return;const sign=x<0?-1:1;if(Math.abs(x)<1)return;const v=neighbor(sign);if(v){if(lay.drawer){lay.drawer=false;hideDrawer()}attachTo(v)}else{detachB();if(cur==='ov'&&sign>0){lay.drawer=true}else if(lay.drawer){lay.drawer=false;hideDrawer()}}}
@@ -1348,9 +1359,9 @@ const gMove=(px,py,e)=>{if(!st)return;const dx=px-st.x,dy=py-st.y;st.dx=dx;st.dy
  if(st&&st.mode==='drag'){x=st.base+dx;neighborFor();apply();st.h.push([px,performance.now()]);if(st.h.length>6)st.h.shift();if(e&&e.cancelable)e.preventDefault()}};
 function releaseTo(v){if(!lay)return;const W=lay.w;
  if(lay.drawer){const DWf=DW(),vis=Math.max(0,Math.min(DWf,x)),o=(vis>DWf*.5&&v>-500)||v>500;run(o?DWf:0,v,o?()=>{lay.drawer=true;openedDrawer()}:closedDrawer);return}
- if(lay.B){const dirn=x<0?-1:1,mv=Math.abs(x),same=Math.sign(v)===dirn,far=(mv>W*.35&&(Math.abs(v)<300||same))||(Math.abs(v)>500&&same&&mv>24),Bv=lay.Bv;if(far){run(dirn*W,v,()=>finishTo(Bv));return}}
- run(0,v,()=>unlay())}
-function settle(ab){if(!st)return;const s2=st;st=null;if(s2.mode!=='drag'||!lay)return;if(ab===true&&!s2.take){if(s2.base>0){if(lay.drawer)run(DW(),0,()=>{openedDrawer()});else unlay()}else if(lay.drawer){run(0,0,closedDrawer)}else run(0,0,()=>unlay());return}
+ if(lay.B){const dirn=x<0?-1:1,mv=Math.abs(x),same=Math.sign(v)===dirn,far=(mv>W*.35&&(Math.abs(v)<300||same))||(Math.abs(v)>500&&same&&mv>24),Bv=lay.Bv;if(far){lay.goal='commit';run(dirn*W,v,()=>finishTo(Bv));return}}
+ lay.goal='cancel';run(0,v,endCancel)}
+function settle(ab){if(!st)return;const s2=st;st=null;if(s2.mode!=='drag'||!lay)return;if(ab===true&&!s2.take){if(s2.base>0){if(lay.drawer)run(DW(),0,()=>{openedDrawer()});else unlay()}else if(lay.drawer){run(0,0,closedDrawer)}else{lay.goal='cancel';run(0,0,endCancel)}return}
  noclick=Date.now();releaseTo(ab===true?0:vel(s2.h))}
 window._drawerSettle=()=>settle(true);
 document.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;gStart(e.clientX,e.clientY,e.target)},true);
