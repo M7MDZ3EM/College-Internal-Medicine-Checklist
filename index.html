@@ -583,6 +583,7 @@ window.dispatchEvent(new Event('fbready'));
   html.dragging .jt,html.dragging .sc button{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
   html.dragging body{overflow-anchor:none}
   .dbtn{position:relative}.dbtn svg{transition:transform .25s}html.menu-open .dbtn{z-index:8002}html.menu-open .dbtn svg{transform:rotate(180deg)}#drawer .dh{padding-left:52px}
+.ptag{cursor:pointer}
 </style>
 </head>
 <body>
@@ -675,10 +676,11 @@ function cleanState(raw){
 }
 
 function setSync(kind){
+  if(kind==="saving" && navigator.onLine===false){ kind="offline"; window._offPend=true; } else if(kind==="synced"){ window._offPend=false; }
   const el = document.getElementById("syncStatus");
   const map = {
     synced:["☁️ Synced", false], saving:["☁️ Saving…", false],
-    offline:["⚠️ Offline — will sync when back online", true],
+    offline:["☁️ Offline — will sync when back online", false],
     error:["⚠️ Sync failed", true], "":["", false]
   };
   const m = map[kind] || map[""];
@@ -757,7 +759,7 @@ function stopSync(){window._sig='';
 }
 
 window.addEventListener("offline", ()=>{ if(docRef) setSync("offline"); });
-window.addEventListener("online",  ()=>{ if(docRef) setSync("saving"); });
+window.addEventListener("online",  ()=>{ if(docRef) setSync(window._offPend ? "saving" : "synced"); });
 
 function getTopicState(id){
   return state[id] || { done:false, date:"", r1:false, r2:false, rating:0 };
@@ -1102,7 +1104,7 @@ function aiImport(){const W=document.createElement('div');W.setAttribute('data-m
 function aiBody(){return `<ol style="margin:0 0 10px;padding-left:20px;font-size:.84rem;line-height:1.5"><li>Tap <b>Export for AI</b>. It makes a text file.</li><li>Give that file to an AI (ChatGPT, Gemini, Grok or Claude).</li><li>The AI will ask what you want to focus on. Answer it.</li><li>The AI gives you a new text file.</li><li>Tap <b>Import plan</b>, pick the file (or paste the text), check the preview, then Apply. One tap on Undo removes the whole import.</li></ol><div style="font-size:.78rem;opacity:.7;margin-bottom:10px">iPhone tip: in the share sheet choose “Save to Files”, then attach that file in the AI app. If the AI can only reply in chat, copy its answer and paste it into Import. Nothing personal (no email or name) is in the file.</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" onclick="aiExport()">⬆ Export for AI</button><button class="btn" onclick="aiImport()">⬇ Import plan</button></div>`}
 const calDot=(ps,s,c)=>{const q=ps.filter(([,p])=>TI[p.t].s===s);return q.length?`<b class="${c}${q.every(([,p])=>isOff(p.t))?' pz':''}"></b>`:''};
 function savePlan(id){{const a=document.activeElement;if(a&&a.id==='planQ')a.blur()}renderAll();setSync('saving');docRef.set({plans:{[id]:plans[id]}},{merge:true}).catch(()=>setSync('error'))}
-function planTag(k){const t=today(),L=Object.values(plans).filter(p=>p.t===k&&p.d&&!isDone(k,p)).sort((a,b)=>a.d<b.d?-1:1).slice(0,2);if(!L.length)return'';return L.map(p=>{const f=p.d===t?'today':p.d===addDays(t,1)?'tomorrow':new Date(p.d+'T00:00:00').toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'});return `<span class="ptag${p.d<t?' late':''}" title="Planned in your calendar">📅 ${p.k==='review'?'R'+nn(p)+' ':''}${p.d<t?'overdue · ':''}${f}</span>`}).join('')}
+function planTag(k){const t=today(),L=Object.values(plans).filter(p=>p.t===k&&p.d&&!isDone(k,p)).sort((a,b)=>a.d<b.d?-1:1).slice(0,2);if(!L.length)return'';return L.map(p=>{const f=p.d===t?'today':p.d===addDays(t,1)?'tomorrow':new Date(p.d+'T00:00:00').toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'});return `<span class="ptag${p.d<t?' late':''}" role="button" tabindex="0" onclick="rowMenu(event,'${k}')" title="Planned in your calendar. Tap to remove it from the plan">📅 ${p.k==='review'?'R'+nn(p)+' ':''}${p.d<t?'overdue · ':''}${f}</span>`}).join('')}
 const nn=p=>p.k==='study'?0:(p.n||1);
 const pid=(t,k,n,d)=>('p_'+k+n+'_'+t+'_'+d).replace(/[^A-Za-z0-9_]/g,'_');
 const dupPlan=(t,k,n,d,skip)=>Object.entries(plans).some(([i,p])=>i!==skip&&p.t===t&&p.k===k&&nn(p)===n&&p.d===d);
@@ -1172,7 +1174,7 @@ function askReset(){const w=prompt('Type IM to erase your Internal Medicine prog
 function closeMenu(){window._md='';['rmenu'].forEach(i=>{const e=document.getElementById(i);if(e)e.remove()})}
 function menuAt(btn,html){closeMenu();const m=document.createElement('div');m.id='rmenu';m.innerHTML=html;document.body.appendChild(m);const r=btn.getBoundingClientRect(),h=m.offsetHeight,w=m.offsetWidth;m.style.left=Math.max(8,Math.min(innerWidth-w-8,r.right-w))+'px';m.style.top=(r.bottom+h+8>innerHeight?Math.max(8,r.top-h-4):r.bottom+4)+'px'}
 function rowAct(k){return `<span class="ra"><button class="rm" onclick="rowMenu(event,'${k}')" aria-label="More actions" title="More">${I('more')}</button></span>`}
-function rowMenu(ev,k){ev.stopPropagation();window._md='';const off=sp[k];menuAt(ev.currentTarget,`<label class="mi"><span id="mdl">Choose a date…</span><input type="date" onfocus="this.closest('#rmenu').dataset.pick=1" oninput="menuPick(this.value)" onchange="menuPick(this.value)"></label><button class="mi add" id="mda" onclick="menuAdd('${k}')">Add to plan</button><button class="mi" onclick="susp('${k}');closeMenu()">${off?'Resume topic':'Pause topic'}</button>`)}
+function rowMenu(ev,k){ev.stopPropagation();window._md='';const off=sp[k],pl=Object.entries(plans).filter(([,q])=>q.t===k&&!isDone(k,q)).sort((a,b)=>a[1].d<b[1].d?-1:1).map(([id,q])=>`<button class="mi" onclick="rm('${id}');closeMenu();toast('Removed from plan')">Remove from plan · ${fmtD(q.d)}${q.k==='review'?' (review)':''}</button>`).join('');menuAt(ev.currentTarget,`<label class="mi"><span id="mdl">Choose a date…</span><input type="date" onfocus="this.closest('#rmenu').dataset.pick=1" oninput="menuPick(this.value)" onchange="menuPick(this.value)"></label><button class="mi add" id="mda" onclick="menuAdd('${k}')">Add to plan</button>${pl}<button class="mi" onclick="susp('${k}');closeMenu()">${off?'Resume topic':'Pause topic'}</button>`)}
 const fmtD=d=>new Date(d+'T00:00:00').toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'});
 function menuPick(v){window._md=RXD.test(v)?v:'';const l=document.getElementById('mdl'),a=document.getElementById('mda'),m=document.getElementById('rmenu');if(l)l.textContent=window._md?fmtD(window._md):'Choose a date…';if(a)a.textContent=window._md?'Add on '+fmtD(window._md):'Add to plan';if(m)m.dataset.pick='1'}
 function menuAdd(k){const d=window._md;if(!d){toast('Choose a date first');return}const n=Object.keys(plans).length;planFrom(k,d);closeMenu();if(Object.keys(plans).length>n)toast('Planned for '+fmtD(d))}
