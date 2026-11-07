@@ -838,7 +838,7 @@ function renderAll(){
           <td class="c-chk"><input type="checkbox" class="chk" aria-label="Mark done" ${st.done?'checked':''} onchange="setTopicState('${id}', {done:this.checked})"></td>
           <td class="topic-cell"><span class="tn">${t[0]}${planTag('im:'+id)}</span>${rowAct('im:'+id)}</td>
           <td class="c-type"><span class="${pillClass}">${t[1]}</span></td>
-          <td class="c-date"><input type="date" aria-label="First pass date" value="${st.date||''}" onchange="setTopicState('${id}', {date:this.value})"></td>
+          <td class="c-date"><input type="date" aria-label="First pass date" max="${today()}" value="${st.date||''}" onchange="rowDate(this,'im','${id}')"></td>
           <td class="c-r1"><label class="rchip"><input type="checkbox" class="round-chk" ${st.r1?'checked':''} onchange="setTopicState('${id}', {r1:this.checked})" title="Round 1 review"><span>R1</span></label></td>
           <td class="c-r2"><label class="rchip"><input type="checkbox" class="round-chk" ${st.r2?'checked':''} onchange="setTopicState('${id}', {r2:this.checked})" title="Round 2 review"><span>R2</span></label></td>
           <td class="c-rate"><div class="rating">${ratingButtons(id, st.rating||0)}</div></td>
@@ -899,7 +899,7 @@ function renderPD(){const _sl=[...document.querySelectorAll('#pdSystems .jump')]
           <td class="c-chk"><input type="checkbox" class="chk" aria-label="Mark done" ${st.done?'checked':''} onchange="setTopicState('${id}', {done:this.checked})"></td>
           <td class="topic-cell"><span class="tn">${t[0]}<span class="tags"><button class="dtag" onclick="pdDoc(${window._dl.indexOf(docOf(t,id))})" title="Filter by this doctor">${escH(docOf(t,id))}</button><button class="dtag" onclick="pdYear('${(t[3]||'56')==='6'?'6only':'56'}')" title="Year plan">${YL[t[3]||'56']}</button></span>${planTag('pd:'+id)}</span>${rowAct('pd:'+id)}</td>
           <td class="c-type"><span class="${pillClass}">${t[1]}</span></td>
-          <td class="c-date"><input type="date" aria-label="First pass date" value="${st.date||''}" onchange="setTopicState('${id}', {date:this.value})"></td>
+          <td class="c-date"><input type="date" aria-label="First pass date" max="${today()}" value="${st.date||''}" onchange="rowDate(this,'im','${id}')"></td>
           <td class="c-r1"><label class="rchip"><input type="checkbox" class="round-chk" ${st.r1?'checked':''} onchange="setTopicState('${id}', {r1:this.checked})" title="Round 1 review"><span>R1</span></label></td>
           <td class="c-r2"><label class="rchip"><input type="checkbox" class="round-chk" ${st.r2?'checked':''} onchange="setTopicState('${id}', {r2:this.checked})" title="Round 2 review"><span>R2</span></label></td>
           <td class="c-rate"><div class="rating">${ratingButtons(id, st.rating||0)}</div></td>
@@ -993,7 +993,7 @@ function renderBB(){
             <td><input type="checkbox" class="chk" ${st.watch?'checked':''} onchange="bbSet('${id}', {watch:this.checked})" title="Watched"></td>
             <td class="topic-cell"><span class="tn">${t.name}${planTag('bb:'+id)}</span>${rowAct('bb:'+id)}</td>
             <td class="mins">${fmtMin(t.minutes)}</td>
-            <td class="c-date"><input type="date" value="${st.wd||''}" aria-label="Date watched" onchange="bbSet('${id}',{wd:this.value})"></td>
+            <td class="c-date"><input type="date" max="${today()}" value="${st.wd||''}" aria-label="Date watched" onchange="rowDate(this,'bb','${id}')"></td>
             <td style="text-align:center"><label class="rchip"><input type="checkbox" class="chk" ${st.notes?'checked':''} onchange="bbSet('${id}', {notes:this.checked})" title="Notes taken"><span>Notes</span></label></td>
             <td style="text-align:center"><label class="rchip"><input type="checkbox" class="chk" ${st.anki?'checked':''} onchange="bbSet('${id}', {anki:this.checked})" title="Anki cards made"><span>Anki</span></label></td>
           </tr>`;
@@ -1487,6 +1487,7 @@ ${c.all?'':`<div style="${fl}"><span>From</span><input type="date" value="${c.fr
 ${pv!=='apple'&&ev.length?'<div style="margin-top:10px;max-height:180px;overflow:auto">'+ev.slice(0,15).map(e=>`<a class="btn" style="display:block;margin:4px 0;text-decoration:none" target="_blank" rel="noopener" href="${calLink(e,pv)}">${escH(e.title)} · ${fmtD(e.d)}</a>`).join('')+(ev.length>15?'<div style="font-size:.72rem;opacity:.6">First 15 shown. Use the .ics for the rest.</div>':'')+'</div>':''}`;
  sheet('calsheet','Add to calendar',body)}
 
+function rowDate(el,s,id){const v=el.value;if(v&&v>today()){toast('Pick today or an earlier date');renderAll();return}(s==='im'?setTopicState:bbSet)(id,s==='im'?{date:v}:{wd:v})}
 function setupNav(){IC.baby='<circle cx="12" cy="7" r="3.5"/><path d="M5 21c.8-4.5 3.6-7 7-7s6.2 2.5 7 7"/>';const nav=document.querySelector('.tabs');if(!nav||nav.dataset.ok)return;nav.dataset.ok=1;
  const lab={'t-ov':['home','Overview'],'t-im':['book','IM'],'t-bb':['vid','B&B'],'t-pd':['baby','Peds'],'t-s':['search','Search']};
  nav.querySelectorAll('button').forEach(b=>{const l=lab[b.id];if(l){b.innerHTML='<span class="ti">'+I(l[0],20)+'</span><span class="tl">'+l[1]+'</span>';if(b.id==='t-s'){b.style.minWidth='0'}}});
@@ -1676,6 +1677,7 @@ function initFB(){
   try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
 }
 if(window.firebase)initFB();else{addEventListener("fbready",initFB,{once:true});setTimeout(()=>{if(!window.firebase)showFatal("Couldn't load Firebase. Check your connection.")},12000)}
+if('serviceWorker' in navigator)addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})});
 </script>
 </body>
 </html>
