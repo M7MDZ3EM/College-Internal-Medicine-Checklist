@@ -2,7 +2,7 @@
 
 A free study tracker for medical students. Track **Internal Medicine**, **Pediatrics** and **Boards & Beyond** in one place, plan your days, and keep your streak going. It works on your phone like an app, and your progress follows you to any device.
 
-**Open it:** https://m7mdz3em.github.io/College-Internal-Medicine-Checklist/
+**Open it:** ( contact me )
 
 ## What it does
 
