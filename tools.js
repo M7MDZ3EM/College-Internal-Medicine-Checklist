@@ -6,15 +6,16 @@ const lc=w=>({im:'#c9895e',bb:'#5b7fbf',pd:'#b86a96'})[w]||`hsl(${(LISTS().index
 const WN={im:'Internal Medicine',bb:'Boards &amp; Beyond',pd:'Pediatrics'};
 let UNDO=null,SELM=false;const SEL=new Set();
 const hideT=()=>['utoast','atoast','dtoast','qtoast'].forEach(i=>{const e=document.getElementById(i);if(e)e.style.display='none'});
-const snapU=()=>({st:JSON.stringify(state),bb:JSON.stringify(bb),pl:JSON.stringify(plans),sp:JSON.stringify(sp)});
-function regU(b,label){if(!label)return;const a=snapU(),ch={};for(const m of ['st','bb','pl','sp']){const B=JSON.parse(b[m]),A=JSON.parse(a[m]),d=[...new Set([...Object.keys(B),...Object.keys(A)])].filter(k=>JSON.stringify(B[k])!==JSON.stringify(A[k]));if(d.length)ch[m]={B,d}}if(!Object.keys(ch).length)return;UNDO={ch,label};const dt=document.getElementById('dtoast');if(dt&&dt.style.display!=='none')return;qToast(label)}
+const snapU=()=>({st:JSON.stringify(state),bb:JSON.stringify(bb),pl:JSON.stringify(plans),sp:JSON.stringify(sp),qb:JSON.stringify(qb)});
+function regU(b,label){if(!label)return;const a=snapU(),ch={};for(const m of ['st','bb','pl','sp','qb']){const B=JSON.parse(b[m]),A=JSON.parse(a[m]),d=[...new Set([...Object.keys(B),...Object.keys(A)])].filter(k=>JSON.stringify(B[k])!==JSON.stringify(A[k]));if(d.length)ch[m]={B,d}}if(!Object.keys(ch).length)return;UNDO={ch,label};const dt=document.getElementById('dtoast');if(dt&&dt.style.display!=='none')return;qToast(label)}
 function qToast(m){hideT();let e=document.getElementById('qtoast');if(!e){e=document.createElement('div');e.id='qtoast';e.style.cssText='max-width:92vw;display:flex;gap:12px;align-items:center;background:#2a2a35;color:#fff;padding:8px 8px 8px 16px;border-radius:99px;font:600 .85rem "Plus Jakarta Sans",sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.3);transition:opacity .25s;pointer-events:auto';tHost().appendChild(e)}e.style.display='flex';e.innerHTML='<span>'+escH(m)+'</span><button onclick="undoNow()" style="font:inherit;border:0;border-radius:99px;padding:7px 14px;min-height:36px;background:#c9895e;color:#fff;cursor:pointer">Undo</button>';fade(e,7000)}
-function undoNow(){const u=UNDO;UNDO=null;hideT();if(!u||!docRef){return}const F=firebase.firestore.FieldValue,w={},map={st:[state,'state'],bb:[bb,'bb'],pl:[plans,'plans'],sp:[sp,'sp']};
+function undoNow(){const u=UNDO;UNDO=null;hideT();if(!u||!docRef){return}const F=firebase.firestore.FieldValue,w={},map={st:[state,'state'],bb:[bb,'bb'],pl:[plans,'plans'],sp:[sp,'sp'],qb:[qb,'qb']};
  for(const m in u.ch){const [obj,key]=map[m],{B,d}=u.ch[m];w[key]={};d.forEach(k=>{if(k in B){obj[k]=B[k];w[key][k]=m==='st'?cleanTopic(B[k]):B[k]}else{delete obj[k];w[key][k]=F.delete()}})}
- renderAll();setSync('saving');docRef.set(w,{merge:true}).catch(()=>setSync('error'));toast('Undone')}
+ window._vs={};renderAll();setSync('saving');docRef.set(w,{merge:true}).catch(()=>setSync('error'));toast('Undone')}
 const withU=(fn,lab)=>function(...a){const b=snapU(),r=fn.apply(this,a);regU(b,typeof lab==='function'?lab(...a):lab);return r};
 setTopicState=withU(setTopicState,(id,p)=>p.done===true||p.r1===true||p.r2===true?'Ticked':p.done===false||p.r1===false||p.r2===false?'Unticked':null);
 bbSet=withU(bbSet,(id,p)=>p.watch===true||p.rv>=1?'Ticked':p.watch===false||p.rv<1?'Unticked':null);
+qbAdd=withU(qbAdd,'Practice logged');qbDel=withU(qbDel,'Session removed');qbSetTot=withU(qbSetTot,'Total updated');
 tgl=withU(tgl,(id,v)=>v?'Ticked':'Unticked');rm=withU(rm,'Removed from plan');mv=withU(mv,'Plan moved');reschedOd=withU(reschedOd,'Plans rescheduled');
 /* pace card: which lists count */
 const paceSel=()=>{const all=LISTS(),c=(cfg.paceLists||[]).filter(w=>all.includes(w));return c.length?c:all};
@@ -51,7 +52,7 @@ bulkDone=withU(bulkDone,'Marked done');bulkPlan=withU(bulkPlan,'Plans added');bu
 const CP=()=>Object.assign({prov:/iPhone|iPad|Macintosh|Mac OS X/.test(navigator.userAgent)?'apple':/Android|Windows/.test(navigator.userAgent)?'google':'apple',sT:'09:00',sL:60,rT:'20:00',rL:30,rem:10,all:true,from:'',to:''},cfg.cal||{});
 let _cs;function calSave(p){cfg.cal=Object.assign({},cfg.cal||{},p);clearTimeout(_cs);_cs=setTimeout(()=>{if(docRef)docRef.set({settings:{cal:cfg.cal}},{merge:true}).catch(()=>setSync('error'))},700);if(document.getElementById('calsheet'))openCal();else if(cur==='set')renderSet()}
 function calEvents(){const c=CP(),t=today(),sl={};return Object.entries(plans).filter(([,p])=>TI[p.t]&&!isDone(p.t,p)&&p.d>=t&&(c.all||((!c.from||p.d>=c.from)&&(!c.to||p.d<=c.to)))).sort((a,b)=>a[1].d<b[1].d?-1:a[1].d>b[1].d?1:(a[1].k==='review')-(b[1].k==='review')).map(([id,p])=>{const T=TI[p.t],rv=p.k==='review',key=p.d+(rv?'r':'s'),len=+(rv?c.rL:c.sL)||30,m0=sl[key]??(+(rv?c.rT:c.sT).slice(0,2)*60+ +(rv?c.rT:c.sT).slice(3,5));sl[key]=m0+len;const f=m=>String(Math.floor(m/60)%24).padStart(2,'0')+String(m%60).padStart(2,'0')+'00',ds=p.d.replace(/-/g,'');
- return{uid:(rv?p.t+'|r'+nn(p)+'|'+p.d:p.t+'|'+p.k).replace(/[^A-Za-z0-9|:_-]/g,'_')+'@study-checklist',title:(rv?'Review '+nn(p):p.k==='revisit'?'Revisit':'Study')+': '+T.n+' ('+WL(T.w)+')',desc:T.g,s:ds+'T'+f(m0),e:ds+'T'+f(m0+len),d:p.d}})}
+ return{uid:(rv?p.t+'|r'+nn(p)+'|'+p.d:p.k==='practice'?p.t+'|pq|'+p.d:p.t+'|'+p.k).replace(/[^A-Za-z0-9|:_-]/g,'_')+'@study-checklist',title:(rv?'Review '+nn(p):p.k==='revisit'?'Revisit':p.k==='practice'?'Practice':'Study')+': '+pName(p)+' ('+WL(T.w)+')',desc:p.k==='practice'?'Mini-OSCE qbank practice · '+T.g:T.g,s:ds+'T'+f(m0),e:ds+'T'+f(m0+len),d:p.d}})}
 function calIcs(ev){const c=CP(),esc=x=>String(x).replace(/\\/g,'\\\\').replace(/[;,]/g,'\\$&').replace(/\n/g,'\\n'),fold=l=>{let o='';while(l.length>72){o+=l.slice(0,72)+'\r\n ';l=l.slice(72)}return o+l},st=new Date().toISOString().replace(/[-:]|\.\d+/g,''),seq=Math.floor(Date.now()/1000),o=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Study Checklist//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH'];
  ev.forEach(e=>{o.push('BEGIN:VEVENT','UID:'+e.uid,'DTSTAMP:'+st,'SEQUENCE:'+seq,'DTSTART:'+e.s,'DTEND:'+e.e,'SUMMARY:'+esc(e.title),'DESCRIPTION:'+esc(e.desc));if(+c.rem>0)o.push('BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+esc(e.title),'TRIGGER:-PT'+(+c.rem)+'M','END:VALARM');o.push('END:VEVENT')});o.push('END:VCALENDAR');return o.map(fold).join('\r\n')+'\r\n'}
 function calFile(share){const ev=calEvents();if(!ev.length){toast('No upcoming plans to export');return}const f=new File([calIcs(ev)],'study-plans.ics',{type:'text/calendar'});if(share&&navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],title:'Study plans'}).catch(()=>{});return}const u=URL.createObjectURL(f),a=document.createElement('a');a.href=u;a.download='study-plans.ics';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}
@@ -71,3 +72,6 @@ ${pv!=='apple'&&ev.length?'<div style="margin-top:10px;max-height:180px;overflow
  sheet('calsheet','Add to calendar',body)}
 
 function rowDate(el,s,id){const v=el.value;if(v&&v>today()){toast('Pick today or an earlier date');renderAll();return}(s==='im'?setTopicState:bbSet)(id,s==='im'?{date:v}:{wd:v})}
+
+/* Mini-OSCE qbank: attach the qb listener once signed in */
+{const _rqb=renderAll;renderAll=function(){try{qbEnsure()}catch(e){console.warn(e)}return _rqb.apply(this,arguments)}}

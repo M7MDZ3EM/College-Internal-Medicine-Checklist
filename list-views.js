@@ -77,12 +77,12 @@ function renderPD(){const _sl=[...document.querySelectorAll('#pdSystems .jump')]
       const id = `${sys.key}-${i}`;
       const st = getTopicState(id);
       if(!isOff('pd:'+id)){ if(st.done) totalDone++; totalCount++; }
-      if((PDF.length&&!PDF.includes(docOf(t,id)))||!inY(t,PDY)) return '';
+      if((PDF.length&&!PDF.includes(docOf(t,id)))||!inY(t,PDY)||(PDQ&&!QBMAP['pd:'+id])) return '';
       const pillClass = t[1] === "Seminar" ? "pill seminar" : "pill";
       return `
         <tr data-tk="pd:${id}" class="${st.done?'done':''} ${isOff('pd:'+id)?'sp':''}">
           <td class="c-chk"><input type="checkbox" class="chk" aria-label="Mark done" ${st.done?'checked':''} onchange="setTopicState('${id}', {done:this.checked})"></td>
-          <td class="topic-cell"><span class="tn">${t[0]}<span class="tags"><button class="dtag" onclick="pdDoc(${window._dl.indexOf(docOf(t,id))})" title="Filter by this doctor">${escH(docOf(t,id))}</button><button class="dtag" onclick="pdYear('${(t[3]||'56')==='6'?'6only':'56'}')" title="Year plan">${YL[t[3]||'56']}</button></span>${planTag('pd:'+id)}</span>${rowAct('pd:'+id)}</td>
+          <td class="topic-cell"><span class="tn">${t[0]}<span class="tags"><button class="dtag" onclick="pdDoc(${window._dl.indexOf(docOf(t,id))})" title="Filter by this doctor">${escH(docOf(t,id))}</button><button class="dtag" onclick="pdYear('${(t[3]||'56')==='6'?'6only':'56'}')" title="Year plan">${YL[t[3]||'56']}</button>${QBMAP['pd:'+id]?'<button class="dtag qtag" onclick="pdMini()" title="Has questions in the Mini-OSCE qbank. Tap to show only these topics">Mini-OSCE</button>':''}</span>${planTag('pd:'+id)}${qbLine('pd:'+id)}</span>${rowAct('pd:'+id)}</td>
           <td class="c-type"><span class="${pillClass}">${t[1]}</span></td>
           <td class="c-date"><input type="date" aria-label="First pass date" max="${today()}" value="${st.date||''}" onchange="rowDate(this,'im','${id}')"></td>
           <td class="c-r1"><label class="rchip"><input type="checkbox" class="round-chk" ${st.r1?'checked':''} onchange="setTopicState('${id}', {r1:this.checked})" title="Round 1 review"><span>R1</span></label></td>
@@ -90,7 +90,7 @@ function renderPD(){const _sl=[...document.querySelectorAll('#pdSystems .jump')]
           <td class="c-rate"><div class="rating">${ratingButtons(id, st.rating||0)}</div></td>
         </tr>`;
     }).join("");
-    if((PDF.length||PDY)&&!rows) return;
+    if((PDF.length||PDY||PDQ)&&!rows) return;
 
     const act = sys.topics.map((t,i)=>i).filter(i=>!isOff('pd:'+sys.key+'-'+i));
     const doneInSys = act.filter(i=>getTopicState(`${sys.key}-${i}`).done).length;
@@ -130,7 +130,9 @@ function renderPD(){const _sl=[...document.querySelectorAll('#pdSystems .jump')]
   document.getElementById("pdBar").style.width = `${pdPct}%`;
   document.querySelectorAll('#pdSystems .jump').forEach((e,i)=>{e.scrollLeft=_sl[i]||0});
 }
-function pdChips(){const L=window._dl=docList(),n=d=>PDATA.reduce((a,x)=>a+x.topics.filter((t,i)=>docOf(t,x.key+'-'+i)===d).length,0),c=(on,js,txt)=>`<button class="jt${on?' sel':''}" aria-pressed="${!!on}" onclick="${js}">${txt}</button>`;return '<div class="jump" style="margin:0 0 6px">'+[['','All years',''],['56','5th·6th year','56'],['6only','6th year only','6']].map(([v,l,y])=>c(PDY===v,`pdYear('${v}')`,`${l} · ${PDATA.reduce((a,x)=>a+x.topics.filter(t=>!y||(t[3]||'56')===y).length,0)}`)).join('')+'</div><div class="jump" style="margin:0 0 12px">'+c(!PDF.length,'pdDoc(-1)','All doctors')+L.map((d,i)=>c(PDF.includes(d),`pdDoc(${i})`,`${d==='Unknown'?'Unknown':'Dr. '+escH(normDoc(d))} · ${n(d)}`)).join('')+'<button class="jt" onclick="pdEditDocs(event)">✎ Edit doctors</button></div>'}
+function pdChips(){const L=window._dl=docList(),n=d=>PDATA.reduce((a,x)=>a+x.topics.filter((t,i)=>docOf(t,x.key+'-'+i)===d).length,0),c=(on,js,txt)=>`<button class="jt${on?' sel':''}" aria-pressed="${!!on}" onclick="${js}">${txt}</button>`;return '<div class="jump" style="margin:0 0 6px">'+c(PDQ,'pdMini()','Mini-OSCE · '+qbCount())+[['','All years',''],['56','5th·6th year','56'],['6only','6th year only','6']].map(([v,l,y])=>c(PDY===v,`pdYear('${v}')`,`${l} · ${PDATA.reduce((a,x)=>a+x.topics.filter(t=>!y||(t[3]||'56')===y).length,0)}`)).join('')+'</div><div class="jump" style="margin:0 0 12px">'+c(!PDF.length,'pdDoc(-1)','All doctors')+L.map((d,i)=>c(PDF.includes(d),`pdDoc(${i})`,`${d==='Unknown'?'Unknown':'Dr. '+escH(normDoc(d))} · ${n(d)}`)).join('')+'<button class="jt" onclick="pdEditDocs(event)">✎ Edit doctors</button></div>'}
+function pdMini(){PDQ=!PDQ;renderPD()}
+function qbLine(k){const g=QBMAP[k];if(!g)return'';const s=qbStat(g);if(!s.L.length)return'';const nm=x=>x.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(),show=!nm(TI[k].n).startsWith(nm(g.n));return `<span class="qbw"><button class="qbl" onclick="qbOpen('${k}')" title="Mini-OSCE qbank practice. Tap to log a session"><b>Practice</b>${show?' · '+escH(g.n):''} · ${s.n>s.tot?'<span class="qrd">redo</span> ':''}${s.n}/${s.tot} · ${s.c} correct · ${qbDate(s.last)}</button><button class="qbe" onclick="qbOpen('${k}',1)" aria-label="Edit total questions" title="Edit total questions">✎</button></span>`}
 function pdYear(y){PDY=PDY===y?'':y;renderPD()}
 function pdDoc(i){const d=(window._dl||[])[i];PDF=i<0||!d?[]:PDF.includes(d)?PDF.filter(x=>x!==d):[...PDF,d];renderPD()}
 function pdSetDoc(ev,k,anc){ev.stopPropagation();const L=docList().filter(d=>d!=='Unknown');menuAt(anc||ev.currentTarget,'<div style="max-height:50vh;overflow:auto">'+L.map((d,i)=>`<button class="mi" onclick="pdApply('${k}',window._dl2[${i}])">${escH(d)}</button>`).join('')+'<button class="mi" onclick="pdNew(\''+k+'\')">New name…</button><button class="mi" onclick="pdApply(\''+k+'\',\'\')">Clear (Unknown)</button></div>');window._dl2=L;document.getElementById('rmenu').classList.add('solid')}
