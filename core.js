@@ -12,34 +12,30 @@ DATA.forEach(s=>s.topics.forEach((t,i)=>TI['im:'+s.key+'-'+i]={s:'im',w:'im',id:
 PDATA.forEach(s=>s.topics.forEach((t,i)=>TI['pd:'+s.key+'-'+i]={s:'im',w:'pd',id:s.key+'-'+i,n:t[0],g:s.name,sk:s.key,doc:t[2],y:t[3]}));
 /* ===== Mini-OSCE qbank practice (numbers only). qb is one flat map saved in the new Firebase field "qb":
    t_<group> = total override (number), s_<id> = a session {g:group, d:date, n:done, c:correct}. Groups come from QBG in data-pd.js. ===== */
-let qb={},PDQ=false,_qbRef=null,_qbUn=null;
+let qb={},_qbRef=null,_qbUn=null;
 const QBMAP={},QBGK={};
-QBG.forEach(g=>{g.keys=[];g.topics.forEach(nm=>{let f='';PDATA.forEach(s=>s.topics.forEach((t,i)=>{if(!f&&t[0]===nm)f='pd:'+s.key+'-'+i}));if(f&&!QBMAP[f]){g.keys.push(f);QBMAP[f]=g}else console.warn('qbank map: topic missing or already mapped:',nm)});QBGK[g.id]=g});
+QBG.forEach(g=>{g.w='pd';g.keys=[];g.topics.forEach(nm=>{let f='';PDATA.forEach(s=>s.topics.forEach((t,i)=>{if(!f&&t[0]===nm)f='pd:'+s.key+'-'+i}));if(f&&!QBMAP[f]){g.keys.push(f);QBMAP[f]=g}else console.warn('qbank map: topic missing or already mapped:',nm)});QBGK[g.id]=g});
 const qbN=(v,lo,hi)=>{v=Math.round(+v);return Number.isFinite(v)&&v>=lo&&v<=hi?v:null};
 const qbTot=g=>qbN(qb['t_'+g.id],1,9999)||g.t;
 const qbSess=g=>Object.entries(qb).filter(([k,v])=>k.startsWith('s_')&&v&&v.g===g.id).map(([id,v])=>Object.assign({id},v)).sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:a.id<b.id?-1:1);
+/* wrong answers = done - correct, summed over sessions. v_<group> remembers how many wrong were already reviewed; to-review = wrong - reviewed. Accuracy never reads v_. */
+const qbWrong=g=>qbSess(g).reduce((a,s)=>a+s.n-s.c,0);
+const qbRev=g=>Math.max(0,qbWrong(g)-(qbN(qb['v_'+g.id],0,99999)||0));
 const qbStat=g=>{const L=qbSess(g);let n=0,c=0;L.forEach(s=>{n+=s.n;c+=s.c});return{L,n,c,last:L.length?L[L.length-1].d:'',tot:qbTot(g)}};
 /* recent results: newest 3 sessions (more, if those add up to fewer than 5 questions or the whole group when smaller) */
-const qbRecent=g=>{const L=qbSess(g),need=Math.min(5,qbTot(g));let n=0,c=0,m=0;for(let i=L.length-1;i>=0;i--){if(m>=3&&n>=need)break;n+=L[i].n;c+=L[i].c;m++}return{n,c,m,pct:n?c/n*100:0,ok:n>=need&&L.length>0}};
-const qbActive=g=>!g.keys.every(k=>isOff(k));
-const qbWeak=()=>QBG.filter(g=>g.keys.length&&qbActive(g)).map(g=>[g,qbRecent(g)]).filter(([,r])=>r.ok&&r.pct<60).sort((a,b)=>a[1].pct-b[1].pct);
-const qbWeek=()=>{const t=today(),mon=addDays(t,-((new Date(t+'T00:00:00').getDay()+6)%7)),sun=addDays(mon,6);let n=0,c=0,m=0;for(const k in qb){const s=qb[k];if(k.startsWith('s_')&&s&&QBGK[s.g]&&s.d>=mon&&s.d<=sun){n+=s.n;c+=s.c;m++}}return{n,c,m}};
 const qbDays=()=>{const D={};for(const k in qb){const s=qb[k];if(!k.startsWith('s_')||!s||!QBGK[s.g])continue;const o=D[s.d]||(D[s.d]={n:0,c:0,L:[]});o.n+=s.n;o.c+=s.c;o.L.push(s)}return D};
 const qbDate=d=>new Date(d+'T00:00:00').toLocaleDateString(undefined,{day:'numeric',month:'short'});
-const qbCount=()=>Object.keys(QBMAP).length;
-const pName=p=>p.k==='practice'&&QBMAP[p.t]?QBMAP[p.t].n:TI[p.t].n;
-const qbNm=k=>{const g=QBMAP[k];return g?escH(g.n)+'<small>'+SL(TI[k])+' · Mini-OSCE practice'+(g.keys.length>1?' · '+g.keys.length+' topics':'')+'</small>':escH(TI[k].n)};
-function qbClean(o){const r={},RX=/^\d{4}-\d{2}-\d{2}$/,lim=addDays(today(),1);if(!o||typeof o!=='object'||Array.isArray(o))return r;let ns=0;for(const [k,v] of Object.entries(o)){if(/^t_[a-z0-9]+$/.test(k)){const n=qbN(v,1,9999);if(QBGK[k.slice(2)]&&n)r[k]=n;continue}if(/^s_[a-z0-9]+$/.test(k)&&v&&typeof v==='object'&&QBGK[v.g]&&RX.test(v.d)&&v.d<=lim&&ns<3000){const n=qbN(v.n,1,9999),c=qbN(v.c,0,9999);if(n&&c!==null&&c<=n){r[k]={g:v.g,d:v.d,n,c};ns++}}}return r}
+function qbClean(o){const r={},RX=/^\d{4}-\d{2}-\d{2}$/,lim=addDays(today(),1);if(!o||typeof o!=='object'||Array.isArray(o))return r;let ns=0;for(const [k,v] of Object.entries(o)){if(/^t_[a-z0-9]+$/.test(k)){const n=qbN(v,1,9999);if(QBGK[k.slice(2)]&&n)r[k]=n;continue}if(/^v_[a-z0-9]+$/.test(k)){const n=qbN(v,0,99999);if(QBGK[k.slice(2)]&&n)r[k]=n;continue}if(/^s_[a-z0-9]+$/.test(k)&&v&&typeof v==='object'&&QBGK[v.g]&&RX.test(v.d)&&v.d<=lim&&ns<3000){const n=qbN(v.n,1,9999),c=qbN(v.c,0,9999);if(n&&c!==null&&c<=n){r[k]={g:v.g,d:v.d,n,c};ns++}}}return r}
 const qbSig=o=>JSON.stringify(Object.keys(o).sort().map(k=>[k,o[k]]));
 /* qb has its own small listener on the same user document, so the existing Firebase reads and writes stay untouched */
 function qbEnsure(){if(!docRef||_qbRef===docRef||typeof docRef.onSnapshot!=='function')return;if(_qbUn){try{_qbUn()}catch(e){}}_qbRef=docRef;_qbUn=docRef.onSnapshot(s=>{const n=qbClean((s.data()||{}).qb);if(qbSig(n)!==qbSig(qb)){qb=n;window._vs={};renderAll()}},()=>{})}
 function qbSave(w){window._vs={};renderAll();setSync('saving');docRef.set({qb:w},{merge:true}).catch(()=>setSync('error'))}
 function qbAdd(gid,d,n,c){if(!docRef||!QBGK[gid])return;const id='s_'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);qb[id]={g:gid,d,n,c};qbSave({[id]:qb[id]})}
-function qbDel(id){if(!docRef||!(id in qb))return;delete qb[id];qbSave({[id]:firebase.firestore.FieldValue.delete()})}
+function qbDel(id){if(!docRef||!(id in qb))return;const g=QBGK[(qb[id]||{}).g],F=firebase.firestore.FieldValue,w={[id]:F.delete()};delete qb[id];if(g){const k='v_'+g.id,b=qbN(qb[k],0,99999)||0,tw=qbWrong(g);if(b>tw){if(tw>0){qb[k]=tw;w[k]=tw}else{delete qb[k];w[k]=F.delete()}}}qbSave(w)}
+function qbMark(gid){const g=QBGK[gid];if(!docRef||!g)return;const k='v_'+gid,tw=qbWrong(g);if(tw>0)qb[k]=tw;else delete qb[k];qbSave({[k]:tw>0?tw:firebase.firestore.FieldValue.delete()})}
 function qbSetTot(gid,v){const g=QBGK[gid],n=qbN(v,1,9999);if(!docRef||!g||!/^\d{1,4}$/.test(String(v).trim())||!n){toast('Enter a total from 1 to 9999');return false}if(n===qbTot(g))return true;const k='t_'+gid;if(n===g.t)delete qb[k];else qb[k]=n;qbSave({[k]:n===g.t?firebase.firestore.FieldValue.delete():n});return true}
-function qbAddPlan(k,d){const g=QBMAP[k];if(!g){toast('This topic has no qbank questions');return}if(!qbActive(g)){toast('This topic is paused. Resume it to plan practice');return}const t=g.keys[0];if(dupPlan(t,'practice',0,d)){toast('Practice already planned for '+fmtD(d));return}const id=pid(t,'practice',0,d);plans[id]={d,t,k:'practice',n:0};savePlan(id)}
 BBDATA.forEach(s=>s.subsystems.forEach((u,a)=>u.topics.forEach((t,b)=>TI['bb:'+s.key+'-'+a+'-'+b]={s:'bb',w:'bb',id:s.key+'-'+a+'-'+b,n:t.name,g:s.name,sk:s.key})));
-function isDone(k,p){if(p.k==='revisit')return !!p.c;if(p.k==='practice')return !!p.pc;const T=TI[k],n=Math.min(p.n||1,2);if(T.s==='im'){const s=getTopicState(T.id);return p.k==='study'?s.done:!!s['r'+n]}const b=bbGet(T.id);return p.k==='study'?b.watch:b.rv>=n}
+function isDone(k,p){if(p.k==='revisit')return !!p.c;const T=TI[k],n=Math.min(p.n||1,2);if(T.s==='im'){const s=getTopicState(T.id);return p.k==='study'?s.done:!!s['r'+n]}const b=bbGet(T.id);return p.k==='study'?b.watch:b.rv>=n}
 function setDone(k,p,v){const T=TI[k],n=Math.min(p.n||1,2);if(T.s==='im'){const s=getTopicState(T.id);setTopicState(T.id,p.k==='study'?{done:v,date:s.date||(v?today():'')}:{['r'+n]:v})}else bbSet(T.id,p.k==='study'?{watch:v}:{rv:v?n:n-1})}
 function nextN(k){const T=TI[k];return T.s==='im'?(getTopicState(T.id).r1?2:1):(bbGet(T.id).rv>=1?2:1)}
 function dueList(){const out=[],t=today();for(const k in TI){const T=TI[k];if(isOff(k))continue;let d,n,rt=0;
@@ -64,7 +60,7 @@ function importData(inp){const f=inp.files&&inp.files[0];if(!f)return;const r=ne
  const isO=x=>x&&typeof x==='object'&&!Array.isArray(x),RXd=/^\d{4}-\d{2}-\d{2}$/;
  if(!isO(d)||!['state','bb','plans','settings','sp','qb'].some(k=>isO(d[k]))){toast('This is not a checklist backup');return}
  const st=cleanState(isO(d.state)?d.state:{}),nb={};for(const [id,o] of Object.entries(isO(d.bb)?d.bb:{})){if(!TI['bb:'+id]||!isO(o))continue;nb[id]={watch:o.watch===true,notes:o.notes===true,anki:o.anki===true,wd:RXd.test(o.wd)?o.wd:'',rv:[1,2].includes(+o.rv)?+o.rv:0,rd1:RXd.test(o.rd1)?o.rd1:'',rd2:RXd.test(o.rd2)?o.rd2:''}}
- const np={},seen={};for(const [id,p] of Object.entries(isO(d.plans)?d.plans:{})){if(!isO(p)||!TI[p.t]||!RXd.test(p.d)||(p.k!=='study'&&p.k!=='review'&&p.k!=='revisit'&&p.k!=='practice')||(p.k==='practice'&&!QBMAP[p.t]))continue;const pt=p.k==='practice'?QBMAP[p.t].keys[0]:p.t,n=p.k!=='review'?0:(+p.n===2?2:1),key=pt+'|'+p.k+'|'+n+'|'+p.d;if(seen[key])continue;seen[key]=1;np[pid(pt,p.k,n,p.d)]={d:p.d,t:pt,k:p.k,n,...(p.a?{a:1}:{}),...(p.k==='revisit'&&RXd.test(p.c)?{c:p.c}:{}),...(p.k==='practice'&&RXd.test(p.pc)?{pc:p.pc}:{})}}
+ const np={},seen={};for(const [id,p] of Object.entries(isO(d.plans)?d.plans:{})){if(!isO(p)||!TI[p.t]||!RXd.test(p.d)||(p.k!=='study'&&p.k!=='review'&&p.k!=='revisit'))continue;const n=p.k!=='review'?0:(+p.n===2?2:1),key=p.t+'|'+p.k+'|'+n+'|'+p.d;if(seen[key])continue;seen[key]=1;np[pid(p.t,p.k,n,p.d)]={d:p.d,t:p.t,k:p.k,n,...(p.a?{a:1}:{}),...(p.k==='revisit'&&RXd.test(p.c)?{c:p.c}:{})}}
  const nsp={};for(const [k,v] of Object.entries(isO(d.sp)?d.sp:{}))if(TI[k]&&v===true)nsp[k]=true;
  const nord={};for(const s of ['im','pd','bb'])if(isO(d.ord)&&Array.isArray(d.ord[s]))nord[s]=d.ord[s].filter(x=>typeof x==='string').slice(0,200);
  const ncol={};for(const [k,v] of Object.entries(isO(d.col)?d.col:{}))if(/^(im|bb|pd):[\w-]+$/.test(k)&&v===true)ncol[k]=true;

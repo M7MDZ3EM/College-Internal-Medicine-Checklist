@@ -87,7 +87,7 @@ async function doAuth(ev){if(ev)ev.preventDefault();window._flash='';const email
   if(AM==='in')await auth.signInWithEmailAndPassword(email,pw);else if(AM==='up')await auth.createUserWithEmailAndPassword(email,pw);
   else{try{await auth.sendPasswordResetEmail(email)}catch(e){if(e.code!=='auth/user-not-found')throw e}msg.innerHTML='If that email has an account, a reset email is on its way.<br><b>Check your junk or spam folder too.</b> If it is there, open it and tap “Not junk” (or “Mark as safe”) so the link works and future emails reach your inbox.';btn.disabled=false;btn.textContent=lab;return false}}
  catch(e){msg.textContent=authErr(e&&e.code);btn.disabled=false;btn.textContent=lab}try{if(AM!=='forgot')localStorage.setItem('lastEmail',email)}catch(e){}return false}
-function wipeLocal(){state={};bb={};plans={};sp={};ord={};colm={};cfg={r1:3,r2:10};try{LAST=null}catch(e){}try{localStorage.removeItem('im_bnb_safety');localStorage.removeItem('tab');if(typeof STORAGE_KEY!=='undefined')localStorage.removeItem(STORAGE_KEY)}catch(e){}['v-ov','systems','bbSystems','pdSystems'].forEach(i=>{const e=document.getElementById(i);if(e)e.innerHTML=''});window._sig=''}
+function wipeLocal(){state={};try{qb={};if(_qbUn)_qbUn();_qbUn=null;_qbRef=null;window.qbClose&&qbClose()}catch(e){}bb={};plans={};sp={};ord={};colm={};cfg={r1:3,r2:10};try{LAST=null}catch(e){}try{localStorage.removeItem('im_bnb_safety');localStorage.removeItem('tab');if(typeof STORAGE_KEY!=='undefined')localStorage.removeItem(STORAGE_KEY)}catch(e){}['v-ov','systems','bbSystems','pdSystems'].forEach(i=>{const e=document.getElementById(i);if(e)e.innerHTML=''});window._sig=''}
 function showFatal(text){
   document.getElementById("systems").innerHTML =
     '<div class="state-msg">⚠️ ' + text + '<br><button onclick="location.reload()">Reload</button></div>';
@@ -116,7 +116,7 @@ function startSync(user){
       const remote = cleanState(snap.data() && snap.data().state);
       if(JSON.stringify(remote) !== JSON.stringify(state) || firstSnapshot) state = remote;
     }
-    const D=snap.data()||{}; bb=D.bb||{}; sp=D.sp||{}; migrateSp(); ord=D.ord||{}; colm=D.col||{}; plans=D.plans||{};{const st=Object.keys(plans).filter(id=>!(plans[id]&&TI[plans[id].t]));if(st.length){st.forEach(id=>delete plans[id]);if(!window._stPurged&&docRef){window._stPurged=1;const F=firebase.firestore.FieldValue,u={};st.forEach(id=>u[id]=F.delete());docRef.set({plans:u},{merge:true}).catch(()=>{})}}}; cfg=Object.assign({r1:3,r2:10},D.settings||{}); if(cfg.theme)applyTheme(cfg.theme);applyFx();
+    const D=snap.data()||{}; bb=D.bb||{}; sp=D.sp||{}; migrateSp(); ord=D.ord||{}; colm=D.col||{}; plans=D.plans||{};{const st=Object.keys(plans).filter(id=>!(plans[id]&&TI[plans[id].t])||plans[id].k==='practice');if(st.length){st.forEach(id=>delete plans[id]);if(!window._stPurged&&docRef){window._stPurged=1;const F=firebase.firestore.FieldValue,u={};st.forEach(id=>u[id]=F.delete());docRef.set({plans:u},{merge:true}).catch(()=>{})}}}; cfg=Object.assign({r1:3,r2:10},D.settings||{}); if(cfg.theme)applyTheme(cfg.theme);applyFx();
     firstSnapshot = false;
     document.body.classList.add("authed");
     {const sg=JSON.stringify([state,bb,plans,sp,ord,colm,cfg]);if(sg!==window._sig)renderAll()}
@@ -126,7 +126,7 @@ function startSync(user){
     setSync("error");
   });
 }
-function stopSync(){window._sig='';
+function stopSync(){window._sig='';try{qb={};if(_qbUn)_qbUn();_qbUn=null;_qbRef=null;window.qbClose&&qbClose()}catch(e){}
   if(unsubscribe){ unsubscribe(); unsubscribe = null; }
   docRef = null; state = {};
 }
